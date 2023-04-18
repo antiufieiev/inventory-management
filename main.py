@@ -3,13 +3,13 @@ import os
 
 from telegram.ext import ApplicationBuilder
 
-import database.storage
-from command.addcheese import *
-from command.adduser import *
-from command.printdatabasestate import *
-from command.printuserhistory import *
-from command.putcheese import *
-from command.removecheese import *
+import bot.database.storage
+from bot.command.addcheese import *
+from bot.command.adduser import *
+from bot.command.printdatabasestate import *
+from bot.command.printuserhistory import *
+from bot.command.putcheese import *
+from bot.command.removecheese import *
 
 logging.basicConfig(
     format='%(asctime)s - %(name)s - %(levelname)s - %(message)s',
@@ -27,7 +27,7 @@ async def unknown(update: Update, context: ContextTypes.DEFAULT_TYPE):
 
 if __name__ == '__main__':
 
-    database.storage.initStorage()
+    bot.database.storage.initStorage()
     token = ''
     if os.environ['PRODUCTION'] == 'true':
         token = os.environ['PRODUCTION_TELEGRAM_TOKEN']

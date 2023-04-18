@@ -3,9 +3,9 @@ from datetime import datetime
 import peewee
 import pytz
 
-from command.basecommand import *
-from database.model import Logs
-from localization.localization import *
+from bot.command.basecommand import *
+from bot.database.model import Logs
+from bot.localization.localization import *
 
 
 def getCurrentTime():

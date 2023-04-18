@@ -1,7 +1,7 @@
 from telegram import Update
 
-from database.model import UserTable
-from entity.entities import AccessLevel
+from bot.database.model import UserTable
+from bot.entity.entities import AccessLevel
 
 
 def checkUserAccess(update: Update) -> int:

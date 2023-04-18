@@ -1,11 +1,11 @@
 from telegram import ReplyKeyboardMarkup, ReplyKeyboardRemove, KeyboardButton, KeyboardButtonRequestUser
 from telegram.ext import MessageHandler, filters
 
-from command.basecommand import *
-from command.default_fallback import *
-from database.model import Logs, database_proxy
-from feature.permissionchecker import checkUserAccess
-from localization.localization import *
+from bot.command.basecommand import *
+from bot.command.default_fallback import *
+from bot.database.model import Logs, database_proxy
+from bot.feature.permissionchecker import checkUserAccess
+from bot.localization.localization import *
 
 
 class UserHistoryCommand(BaseConversation):

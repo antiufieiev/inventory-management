@@ -1,6 +1,6 @@
 import os
 
-from database.model import *
+from bot.database.model import *
 
 
 def initStorage():
