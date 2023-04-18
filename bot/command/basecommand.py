@@ -3,7 +3,7 @@ from typing import Any
 from telegram import Update
 from telegram.ext import CommandHandler, ContextTypes, ConversationHandler, BaseHandler, CallbackContext
 
-from entity.entities import AccessLevel
+from bot.entity.entities import AccessLevel
 
 
 class BaseCommand(object):

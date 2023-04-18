@@ -1,13 +1,13 @@
 import peewee
 from telegram.ext import MessageHandler, filters
 
-from command.basecommand import *
-from command.default_fallback import *
-from database.model import database_proxy
-from database.storage import CheeseVariants
-from feature.activitylogger import ActivityLogger
-from feature.permissionchecker import checkUserAccess
-from localization.localization import *
+from bot.command.basecommand import *
+from bot.command.default_fallback import *
+from bot.database.model import database_proxy
+from bot.database.storage import CheeseVariants
+from bot.feature.activitylogger import ActivityLogger
+from bot.feature.permissionchecker import checkUserAccess
+from bot.localization.localization import *
 
 
 class AddCheeseCommand(BaseConversation):

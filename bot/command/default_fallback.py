@@ -1,4 +1,4 @@
-from command.basecommand import BaseCommand
+from bot.command.basecommand import BaseCommand
 
 
 class DefaultFallbackCommand(BaseCommand):
