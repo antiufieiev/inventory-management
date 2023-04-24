@@ -11,7 +11,7 @@ class Migrator:
             current_version = 0
             try:
                 current_version = DatabaseMetadata.get().version
-            except peewee.DoesNotExist:
+            except Exception:
                 pass
             self.executeMigration(current_version, database_version)
 
@@ -29,10 +29,8 @@ class Migrator:
 
     def from_0_To_1_Migration(self):
         with database_proxy.atomic():
-            database_proxy.create_tables([DatabaseMetadata], fail_silently=True)
-            UserTable.update({UserTable.access_level: AccessLevel.ADMIN})\
-                .where(UserTable.access_level == 2)\
-                .execute()
-            migrate(
-                self.migrator.add_column('user', 'username', CharField(default=''))
-            )
+            database_proxy.create_tables([UserTable, CheeseVariants, Packaging, Batches, Logs, DatabaseMetadata], fail_silently=True)
+            Packaging(packaging=0.15).save()
+            Packaging(packaging=0.3).save()
+            Packaging(packaging=0.5).save()
+            Packaging(packaging=1).save()
