@@ -10,6 +10,7 @@ from bot.command.printdatabasestate import *
 from bot.command.printuserhistory import *
 from bot.command.putcheese import *
 from bot.command.removecheese import *
+from bot.command.removeuser import RemoveUserCommand
 
 logging.basicConfig(
     format='%(asctime)s - %(name)s - %(levelname)s - %(message)s',
@@ -38,6 +39,7 @@ if __name__ == '__main__':
 
     application.add_handler(CommandHandler('start', start))
     application.add_handler(AddUserCommand().createTelegramConversation())
+    application.add_handler(RemoveUserCommand().createTelegramConversation())
     application.add_handler(AddCheeseCommand().createTelegramConversation())
     application.add_handler(PutCheeseCommand().createTelegramConversation())
     application.add_handler(RemoveCheeseCommand().createTelegramConversation())
