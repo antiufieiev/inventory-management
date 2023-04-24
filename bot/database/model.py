@@ -23,7 +23,7 @@ class ReconnectingProxy(Proxy):
 
 
 database_proxy = ReconnectingProxy()
-database_version = 1
+database_version = 2
 
 
 class BaseModel(Model):
@@ -37,6 +37,7 @@ class UserTable(BaseModel):
 
     user_id = IntegerField(unique=True)
     access_level = IntegerField(default=0)
+    username = CharField(default='')
 
 
 class CheeseVariants(BaseModel):

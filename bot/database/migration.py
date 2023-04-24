@@ -1,8 +1,10 @@
 from bot.database.model import *
 from bot.entity.entities import AccessLevel
+from playhouse.migrate import *
 
 
 class Migrator:
+    migrator = MySQLMigrator(database_proxy)
 
     def migrate(self):
         with database_proxy.connection_context():
@@ -25,10 +27,12 @@ class Migrator:
 
         self.executeMigration(from_version + 1, to_version)
 
-    @staticmethod
-    def from_0_To_1_Migration():
-        database_proxy.create_tables([DatabaseMetadata], fail_silently=True)
-        UserTable.update({UserTable.access_level: AccessLevel.ADMIN})\
-            .where(UserTable.access_level == 2)\
-            .execute()
-        return
+    def from_0_To_1_Migration(self):
+        with database_proxy.atomic():
+            database_proxy.create_tables([DatabaseMetadata], fail_silently=True)
+            UserTable.update({UserTable.access_level: AccessLevel.ADMIN})\
+                .where(UserTable.access_level == 2)\
+                .execute()
+            migrate(
+                self.migrator.add_column('user', 'username', CharField(default=''))
+            )

@@ -66,7 +66,6 @@ class AddUserCommand(BaseConversation):
 
     async def handleAccessLevelSelection(self, update: Update, context: ContextTypes.DEFAULT_TYPE) -> int:
         user_id = context.user_data["user_id"]
-        print(update.message.text)
         if (update.message.text == localization_map[Keys.ACCESS_LEVEL_EMPLOYEE]
                 or update.message.text == localization_map[Keys.ACCESS_LEVEL_ADMIN]):
 
