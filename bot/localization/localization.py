@@ -44,6 +44,7 @@ class Keys(Enum):
     COUNT_INPUT_ERROR_OVERLOAD = 35
     PRINT_DATABASE_STATE_LINE = 36
     USER_DELETED = 37
+    ENTER_PACKAGING = 38
 
 
 ru_map = {
@@ -83,7 +84,8 @@ ru_map = {
     Keys.ENTER_COMMENT: "Введите комментарий",
     Keys.COUNT_INPUT_ERROR_NUMERIC: "Ошибка! Ожидается число",
     Keys.COUNT_INPUT_ERROR_OVERLOAD: "Ошибка! В партии меньше сыра, чем введено.",
-    Keys.USER_DELETED: "Пользователь {0} успешно удален из системы."
+    Keys.USER_DELETED: "Пользователь {0} успешно удален из системы.",
+    Keys.ENTER_PACKAGING: "Введите фасовку"
 }
 
 localization_map = ru_map

@@ -7,14 +7,14 @@ from telegram.ext import MessageHandler, filters, CallbackQueryHandler
 
 from bot.command.basecommand import *
 from bot.command.default_fallback import *
-from bot.database.model import CheeseVariants, Batches, database_proxy
+from bot.database.model import CheeseVariants, Batches, database_proxy, Packaging
 from bot.feature.activitylogger import ActivityLogger
 from bot.feature.permissionchecker import checkUserAccess
 from bot.localization.localization import *
 
 
 class PutCheeseCommand(BaseConversation):
-    STATE_INIT, STATE_TYPE_SELECTED, STATE_COUNT_SELECTED, STATE_PACKED_SELECTED, STATE_COMMENT = range(5)
+    STATE_INIT, STATE_TYPE_SELECTED, STATE_COUNT_SELECTED, STATE_PACKED_SELECTED, STATE_PACKAGING, STATE_COMMENT = range(6)
     ADMIN, EMPLOYEE = range(2)
 
     def __init__(self):
@@ -36,25 +36,15 @@ class PutCheeseCommand(BaseConversation):
                     pattern=f"^{self.callback_filter}"
                 )
             ],
+            self.STATE_PACKAGING: [
+                CallbackQueryHandler(
+                    self.handleInlineButtonClick,
+                    pattern=f"^{self.callback_filter}"
+                )
+            ],
             self.STATE_COUNT_SELECTED: [MessageHandler(filters.TEXT & ~filters.COMMAND, self.handleCountEntered)],
             self.STATE_COMMENT: [MessageHandler(filters.TEXT & ~filters.COMMAND, self.handleCommentEntered)]
         }
-
-    async def handleInlineButtonClick(self, update: Update, context: ContextTypes.DEFAULT_TYPE):
-
-        query = update.callback_query
-        print(query.data)
-        filtered = self.omitFilter(query.data).partition(':')
-        state = filtered[0]
-        data = filtered[2]
-        new_state = self.STATE_TYPE_SELECTED
-        if state == str(self.STATE_INIT):
-            new_state = await self.handleTypeSelected(data, update, context)
-        if state == str(self.STATE_PACKED_SELECTED):
-            new_state = await self.handlePackedEntered(data, update, context)
-
-        await query.answer()
-        return new_state
 
     async def executeCommand(self, update: Update, context: ContextTypes.DEFAULT_TYPE) -> int:
         if checkUserAccess(update) >= AccessLevel.EMPLOYEE:
@@ -78,6 +68,22 @@ class PutCheeseCommand(BaseConversation):
                 text=localization_map[Keys.ACCESS_DENIED],
             )
             return ConversationHandler.END
+
+    async def handleInlineButtonClick(self, update: Update, context: ContextTypes.DEFAULT_TYPE):
+        query = update.callback_query
+        filtered = self.omitFilter(query.data).partition(':')
+        state = filtered[0]
+        data = filtered[2]
+        new_state = self.STATE_TYPE_SELECTED
+        if state == str(self.STATE_INIT):
+            new_state = await self.handleTypeSelected(data, update, context)
+        if state == str(self.STATE_PACKED_SELECTED):
+            new_state = await self.handlePackedEntered(data, update, context)
+        if state == str(self.STATE_PACKAGING):
+            new_state = await self.handlePackagingFormatSelected(data, update, context)
+
+        await query.answer()
+        return new_state
 
     async def handleTypeSelected(self, cheese_type: str, update: Update, context: ContextTypes.DEFAULT_TYPE) -> int:
         if not cheese_type.strip():
@@ -145,6 +151,24 @@ class PutCheeseCommand(BaseConversation):
             return self.STATE_PACKED_SELECTED
 
         context.user_data["is_packed"] = is_packed
+        with database_proxy.connection_context():
+            packagingList = Packaging.select().execute()
+            data = list(
+                map(lambda packaging: InlineKeyboardButton(
+                    text=str(packaging.packaging),
+                    callback_data=f"{self.callback_filter}{self.STATE_PACKAGING}:{packaging.id}"
+                ), packagingList)
+            )
+            keyboard = [data]
+            await context.bot.send_message(
+                chat_id=update.effective_chat.id,
+                text=localization_map[Keys.ENTER_PACKAGING],
+                reply_markup=InlineKeyboardMarkup(keyboard)
+            )
+            return self.STATE_PACKAGING
+
+    async def handlePackagingFormatSelected(self, packaging_id: str, update: Update, context: ContextTypes.DEFAULT_TYPE) -> int:
+        context.user_data["packaging_id"] = packaging_id
         await context.bot.send_message(
             chat_id=update.effective_chat.id,
             text=localization_map[Keys.ENTER_COMMENT]
@@ -163,6 +187,7 @@ class PutCheeseCommand(BaseConversation):
         count = context.user_data["count"]
         cheese_id = context.user_data["cheese_id"]
         is_packed = context.user_data["is_packed"]
+        packaging_id = context.user_data["packaging_id"]
         try:
             with database_proxy.connection_context():
                 batch = self.generateBatchName(cheese_id)
@@ -170,7 +195,7 @@ class PutCheeseCommand(BaseConversation):
                     cheese_id=cheese_id,
                     batch_number=batch,
                     count=count,
-                    packed=is_packed,
+                    packaging_id=int(packaging_id),
                     comment=comment
                 ).save(force_insert=True)
                 input_text = localization_map[Keys.ADD_CHEESE_SUCCESS].format(batch, count)
