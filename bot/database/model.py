@@ -1,6 +1,7 @@
 import time
+import peewee
 
-from peewee import *
+from playhouse.migrate import *
 
 
 def connect_db(db, retries=3, delay=5):
@@ -22,6 +23,7 @@ class ReconnectingProxy(Proxy):
 
 
 database_proxy = ReconnectingProxy()
+database_version = 1
 
 
 class BaseModel(Model):
@@ -64,3 +66,10 @@ class Logs(BaseModel):
     user_id = IntegerField()
     text = CharField()
     date = DateTimeField()
+
+
+class DatabaseMetadata(BaseModel):
+    class Meta:
+        db_table = "db_metadata"
+
+    version = IntegerField(primary_key=True)
