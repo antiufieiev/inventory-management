@@ -6,20 +6,20 @@ from telegram.ext import MessageHandler, filters, CallbackQueryHandler
 
 from bot.commands.basecommand import *
 from bot.commands.default_fallback import *
-from bot.commands.putcheese.states import selectcountstate, selectpackagingstate, selectispackagedstate, \
-    selectcheesetypestate, selectcommentstate
+from bot.usecase import selectcountstate, selectpackagingstate, selectispackagedstate, selectcommentstate, \
+    selectcheesetypestate
 from bot.database.model import Batches, database_proxy, Packaging
 from bot.feature.activitylogger import ActivityLogger
 from bot.feature.permissionchecker import checkUserAccess
 from bot.localization.localization import *
-from bot.commands.putcheese.states.state_values import *
+from bot.usecase.state_values import *
 
 
 class PutCheeseCommand(BaseConversation):
 
     def __init__(self):
         super(PutCheeseCommand, self).__init__(
-            command_name="putcheese",
+            command_name="put_cheese",
             fallback_command=DefaultFallbackCommand()
         )
 
@@ -43,8 +43,7 @@ class PutCheeseCommand(BaseConversation):
                 )
             ],
             STATE_WAIT_FOR_COUNT_INPUT: [MessageHandler(filters.TEXT & ~filters.COMMAND, self.handleCountEntered)],
-            STATE_WAIT_FOR_COMMENT_INPUT: [
-                MessageHandler(filters.TEXT & ~filters.COMMAND, self.handleCommentResponse)]
+            STATE_WAIT_FOR_COMMENT_INPUT: [MessageHandler(filters.TEXT & ~filters.COMMAND, self.handleCommentResponse)]
         }
 
     async def executeCommand(self, update: Update, context: ContextTypes.DEFAULT_TYPE) -> int:
@@ -62,7 +61,7 @@ class PutCheeseCommand(BaseConversation):
         state = filtered[0]
         data = filtered[2]
         new_state = STATE_WAIT_FOR_CHEESE_TYPE_SELECTION
-        if state == str(STATE_INIT):
+        if state == str(STATE_CHEESE_TYPE_SELECTED):
             new_state = await self.handleTypeSelected(data, update, context)
         if state == str(STATE_WAIT_FOR_IS_PACKED_SELECTION):
             new_state = await self.handlePackedEntered(data, update, context)
