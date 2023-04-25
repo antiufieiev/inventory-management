@@ -1,8 +1,8 @@
 import peewee
 from telegram.ext import MessageHandler, filters
 
-from bot.command.basecommand import *
-from bot.command.default_fallback import *
+from bot.commands.basecommand import *
+from bot.commands.default_fallback import *
 from bot.database.model import database_proxy
 from bot.database.storage import CheeseVariants
 from bot.feature.activitylogger import ActivityLogger

@@ -1,8 +1,8 @@
 from telegram import ReplyKeyboardMarkup, ReplyKeyboardRemove, KeyboardButton, KeyboardButtonRequestUser
 from telegram.ext import MessageHandler, filters
 
-from bot.command.basecommand import *
-from bot.command.default_fallback import *
+from bot.commands.basecommand import *
+from bot.commands.default_fallback import *
 from bot.database.model import Logs, database_proxy
 from bot.feature.permissionchecker import checkUserAccess
 from bot.localization.localization import *

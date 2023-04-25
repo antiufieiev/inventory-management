@@ -2,8 +2,8 @@ import peewee
 from telegram import ReplyKeyboardMarkup, ReplyKeyboardRemove, KeyboardButtonRequestUser, KeyboardButton
 from telegram.ext import MessageHandler, filters
 
-from bot.command.basecommand import *
-from bot.command.default_fallback import *
+from bot.commands.basecommand import *
+from bot.commands.default_fallback import *
 from bot.database.model import UserTable, database_proxy
 from bot.feature.activitylogger import ActivityLogger
 from bot.feature.permissionchecker import checkUserAccess
@@ -53,7 +53,8 @@ class AddUserCommand(BaseConversation):
         keyboard = [
             [
                 localization_map[Keys.ACCESS_LEVEL_ADMIN],
-                localization_map[Keys.ACCESS_LEVEL_EMPLOYEE]
+                localization_map[Keys.ACCESS_LEVEL_EMPLOYEE],
+                localization_map[Keys.ACCESS_LEVEL_MANAGER]
             ]
         ]
         reply_markup = ReplyKeyboardMarkup(keyboard, resize_keyboard=True, one_time_keyboard=True)
@@ -67,7 +68,8 @@ class AddUserCommand(BaseConversation):
     async def handleAccessLevelSelection(self, update: Update, context: ContextTypes.DEFAULT_TYPE) -> int:
         user_id = context.user_data["user_id"]
         if (update.message.text == localization_map[Keys.ACCESS_LEVEL_EMPLOYEE]
-                or update.message.text == localization_map[Keys.ACCESS_LEVEL_ADMIN]):
+                or update.message.text == localization_map[Keys.ACCESS_LEVEL_ADMIN]
+                or update.message.text == localization_map[Keys.ACCESS_LEVEL_MANAGER]):
 
             access_level = update.message.text
             access_level_int = -1
@@ -76,6 +78,8 @@ class AddUserCommand(BaseConversation):
                 access_level_int = AccessLevel.ADMIN
             if access_level == localization_map[Keys.EMPLOYEE]:
                 access_level_int = AccessLevel.EMPLOYEE
+            if access_level == localization_map[Keys.ACCESS_LEVEL_MANAGER]:
+                access_level_int = AccessLevel.MANAGER
 
             try:
                 with database_proxy.connection_context():

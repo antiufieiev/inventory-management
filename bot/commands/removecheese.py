@@ -4,8 +4,8 @@ import peewee
 from telegram import InlineKeyboardMarkup, InlineKeyboardButton
 from telegram.ext import MessageHandler, filters, CallbackQueryHandler
 
-from bot.command.basecommand import *
-from bot.command.default_fallback import *
+from bot.commands.basecommand import *
+from bot.commands.default_fallback import *
 from bot.database.model import database_proxy
 from bot.database.storage import CheeseVariants, Batches
 from bot.feature.activitylogger import ActivityLogger

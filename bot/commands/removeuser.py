@@ -1,8 +1,8 @@
 from telegram.ext import ContextTypes, ConversationHandler, MessageHandler, filters
 from telegram import Update, KeyboardButton, ReplyKeyboardMarkup, KeyboardButtonRequestUser, ReplyKeyboardRemove
 
-from bot.command.basecommand import BaseConversation
-from bot.command.default_fallback import DefaultFallbackCommand
+from bot.commands.basecommand import BaseConversation
+from bot.commands.default_fallback import DefaultFallbackCommand
 from bot.database.model import database_proxy, UserTable
 from bot.entity.entities import AccessLevel
 from bot.feature.permissionchecker import checkUserAccess

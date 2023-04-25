@@ -3,7 +3,7 @@ from datetime import datetime
 import peewee
 import pytz
 
-from bot.command.basecommand import *
+from bot.commands.basecommand import *
 from bot.database.model import Logs
 from bot.localization.localization import *
 
