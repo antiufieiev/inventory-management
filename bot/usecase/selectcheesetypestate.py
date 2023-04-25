@@ -3,7 +3,7 @@ from telegram.ext import ContextTypes
 
 from bot.database.model import CheeseVariants, database_proxy
 from bot.localization.localization import localization_map, Keys
-from bot.commands.putcheese.states.state_values import *
+from bot.usecase.state_values import *
 
 
 async def prepareSelectCheeseTypeState(callback_filter: str, update: Update) -> int:
@@ -12,7 +12,7 @@ async def prepareSelectCheeseTypeState(callback_filter: str, update: Update) -> 
         data = list(
             map(lambda variant: InlineKeyboardButton(
                 text=variant.name,
-                callback_data=f"{callback_filter}{STATE_INIT}:{variant.name}"
+                callback_data=f"{callback_filter}{STATE_CHEESE_TYPE_SELECTED}:{variant.name}"
             ), variants)
         )
         chunks = [data[x:x + 3] for x in range(0, len(data), 3)]

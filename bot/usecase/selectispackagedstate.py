@@ -1,7 +1,7 @@
 from telegram import Update, InlineKeyboardButton, InlineKeyboardMarkup
 from telegram.ext import ContextTypes
 
-from bot.commands.putcheese.states.state_values import *
+from bot.usecase.state_values import *
 from bot.localization.localization import localization_map, Keys
 
 

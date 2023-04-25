@@ -8,9 +8,10 @@ from bot.commands.addcheese import *
 from bot.commands.adduser import *
 from bot.commands.printdatabasestate import *
 from bot.commands.printuserhistory import *
-from bot.commands.putcheese.command import *
+from bot.commands.putcheese import *
 from bot.commands.removecheese import *
 from bot.commands.removeuser import RemoveUserCommand
+from bot.commands.removecheesetype import *
 
 logging.basicConfig(
     format='%(asctime)s - %(name)s - %(levelname)s - %(message)s',
@@ -45,6 +46,7 @@ if __name__ == '__main__':
     application.add_handler(RemoveCheeseCommand().createTelegramConversation())
     application.add_handler(UserHistoryCommand().createTelegramConversation())
     application.add_handler(DatabaseStateCommand().createTelegramCommand())
+    application.add_handler(RemoveCheeseTypeCommand().createTelegramConversation())
     application.add_handler(MessageHandler(filters.TEXT, unknown))
 
     application.run_polling()

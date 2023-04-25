@@ -44,7 +44,6 @@ class RemoveCheeseCommand(BaseConversation):
     async def handleInlineButtonClick(self, update: Update, context: ContextTypes.DEFAULT_TYPE):
         query = update.callback_query
         filtered = self.omitFilter(query.data).partition(':')
-        print(filtered)
         state = filtered[0]
         data = filtered[2]
         new_state = self.STATE_TYPE_SELECTED

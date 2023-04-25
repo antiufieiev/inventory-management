@@ -20,7 +20,8 @@ class UserHistoryCommand(BaseConversation):
     def createStatesWithHandlers(self):
         return {
             self.STATE_NICKNAME_SELECTED: [
-                MessageHandler(filters.StatusUpdate.USER_SHARED, self.handleNicknameSelected)]
+                MessageHandler(filters.StatusUpdate.USER_SHARED, self.handleNicknameSelected)
+            ]
         }
 
     async def executeCommand(self, update: Update, context: ContextTypes.DEFAULT_TYPE) -> int:

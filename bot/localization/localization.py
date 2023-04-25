@@ -48,6 +48,7 @@ class Keys(Enum):
     ACCESS_LEVEL_MANAGER = 39
     EMPLOYEE_ADD_CHEESE_SUCCESS = 40,
     ADD_CHEESE_SUCCESS_NO_PACKAGING = 40
+    CHEESE_VARIANT_DELETED = 41
 
 
 ru_map = {
@@ -63,7 +64,7 @@ ru_map = {
     Keys.CHEESE_TYPE_ADDED: "Готово! Новый сорт сыра с названием {0} был успешно добавлен",
     Keys.ERROR_CHEESE_TYPE_EXIST: "Ошибка! Данный вид сыра уже существует",
     Keys.ERROR_EMPTY: "Ошибка! Ввод пустой",
-    Keys.SELECT_CHEESE_TYPE: "Введите сорт сыра",
+    Keys.SELECT_CHEESE_TYPE: "Выберите сорт сыра",
     Keys.ENTER_CHEESE_AMOUNT: "Введите количество",
     Keys.ENTER_CHEESE_PACKED_STATE: "Введите состояние",
     Keys.ERROR_NO_TYPE_EXIST: "Сорт {0} не существует в базе",
@@ -92,6 +93,7 @@ ru_map = {
     Keys.ENTER_PACKAGING: "Введите фасовку",
     Keys.ACCESS_LEVEL_MANAGER: "Менеджер",
     Keys.EMPLOYEE_ADD_CHEESE_SUCCESS: "Готово! Добавлена партия {0} в количестве {1}. Не забудьте указать номер партии и повесить табличку.",
+    Keys.CHEESE_VARIANT_DELETED: "Успех! Вид cыра с названием {0} удален из системы."
 }
 
 localization_map = ru_map
