@@ -1,8 +1,8 @@
 from telegram import ReplyKeyboardMarkup, ReplyKeyboardRemove, KeyboardButton, KeyboardButtonRequestUser
 from telegram.ext import MessageHandler, filters
 
-from bot.command.basecommand import *
-from bot.command.default_fallback import *
+from bot.commands.basecommand import *
+from bot.commands.default_fallback import *
 from bot.database.model import Logs, database_proxy
 from bot.feature.permissionchecker import checkUserAccess
 from bot.localization.localization import *
@@ -20,7 +20,8 @@ class UserHistoryCommand(BaseConversation):
     def createStatesWithHandlers(self):
         return {
             self.STATE_NICKNAME_SELECTED: [
-                MessageHandler(filters.StatusUpdate.USER_SHARED, self.handleNicknameSelected)]
+                MessageHandler(filters.StatusUpdate.USER_SHARED, self.handleNicknameSelected)
+            ]
         }
 
     async def executeCommand(self, update: Update, context: ContextTypes.DEFAULT_TYPE) -> int:
@@ -57,4 +58,5 @@ class UserHistoryCommand(BaseConversation):
                     text=localization_map[Keys.PRINT_LOG].format(str(log.user_id), log.text, str(log.date)),
                     reply_markup=ReplyKeyboardRemove()
                 )
+        context.user_data.clear()
         return ConversationHandler.END

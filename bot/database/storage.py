@@ -14,5 +14,4 @@ def initStorage():
     )
     database_proxy.initialize(db)
     with database_proxy.connection_context():
-        db.create_tables([UserTable, CheeseVariants, Batches, Logs], fail_silently=True)
         Migrator().migrate()

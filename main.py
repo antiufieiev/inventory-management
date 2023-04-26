@@ -4,13 +4,14 @@ import os
 from telegram.ext import ApplicationBuilder
 
 import bot.database.storage
-from bot.command.addcheese import *
-from bot.command.adduser import *
-from bot.command.printdatabasestate import *
-from bot.command.printuserhistory import *
-from bot.command.putcheese import *
-from bot.command.removecheese import *
-from bot.command.removeuser import RemoveUserCommand
+from bot.commands.addcheese import *
+from bot.commands.adduser import *
+from bot.commands.printdatabasestate import *
+from bot.commands.printuserhistory import *
+from bot.commands.putcheese import *
+from bot.commands.removecheese import *
+from bot.commands.removeuser import RemoveUserCommand
+from bot.commands.removecheesetype import *
 
 logging.basicConfig(
     format='%(asctime)s - %(name)s - %(levelname)s - %(message)s',
@@ -23,7 +24,7 @@ async def start(update: Update, context: ContextTypes.DEFAULT_TYPE):
 
 
 async def unknown(update: Update, context: ContextTypes.DEFAULT_TYPE):
-    await context.bot.send_message(chat_id=update.effective_chat.id, text="Sorry, I didn't understand that command")
+    await context.bot.send_message(chat_id=update.effective_chat.id, text="Sorry, I didn't understand that commands")
 
 
 if __name__ == '__main__':
@@ -45,6 +46,7 @@ if __name__ == '__main__':
     application.add_handler(RemoveCheeseCommand().createTelegramConversation())
     application.add_handler(UserHistoryCommand().createTelegramConversation())
     application.add_handler(DatabaseStateCommand().createTelegramCommand())
+    application.add_handler(RemoveCheeseTypeCommand().createTelegramConversation())
     application.add_handler(MessageHandler(filters.TEXT, unknown))
 
     application.run_polling()

@@ -1,5 +1,5 @@
-from bot.command.basecommand import *
-from bot.command.default_fallback import *
+from bot.commands.basecommand import *
+from bot.commands.default_fallback import *
 from bot.database.model import Batches, database_proxy
 from bot.feature.permissionchecker import checkUserAccess
 from bot.localization.localization import *
@@ -20,14 +20,14 @@ class DatabaseStateCommand(BaseConversation):
             with database_proxy.connection_context():
                 for batch in Batches.select():
                     line = localization_map[Keys.PRINT_DATABASE_STATE_LINE].format(
-                        batch.cheese_id.name,
+                        batch.cheese.name,
                         batch.batch_number,
                         str(batch.count),
                         batch.comment
                     )
-                    if batch.packed == 1:
+                    if batch.packaging is not None:
                         packed += line
-                    if batch.packed == 0:
+                    if batch.packaging is None:
                         unpacked += line
             await context.bot.send_message(
                 chat_id=update.effective_chat.id,
@@ -37,4 +37,5 @@ class DatabaseStateCommand(BaseConversation):
             await update.effective_message.reply_text(
                 text=localization_map[Keys.ACCESS_DENIED],
             )
+        context.user_data.clear()
         return ConversationHandler.END

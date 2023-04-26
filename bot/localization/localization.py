@@ -44,6 +44,11 @@ class Keys(Enum):
     COUNT_INPUT_ERROR_OVERLOAD = 35
     PRINT_DATABASE_STATE_LINE = 36
     USER_DELETED = 37
+    ENTER_PACKAGING = 38
+    ACCESS_LEVEL_MANAGER = 39
+    EMPLOYEE_ADD_CHEESE_SUCCESS = 40,
+    ADD_CHEESE_SUCCESS_NO_PACKAGING = 40
+    CHEESE_VARIANT_DELETED = 41
 
 
 ru_map = {
@@ -54,12 +59,12 @@ ru_map = {
     Keys.EMPLOYEE: "Сотрудник",
     Keys.SELECT_ACCESS_LEVEL: "Выберите уровень доступа",
     Keys.ERROR_BLANK_USERNAME: "Некорректное имя пользователя",
-    Keys.ADD_USER_SUCCESS: "Поздравляем! Пользователю {0} был надан уровень доступа: {1}",
+    Keys.ADD_USER_SUCCESS: "Готово! Пользователю {0} был надан уровень доступа: {1}",
     Keys.ENTER_CHEESE_NAME: "Введите новый сорт сыра",
-    Keys.CHEESE_TYPE_ADDED: "Поздравляем! Новый сорт сыра с названием {0} был успешно добавлен",
+    Keys.CHEESE_TYPE_ADDED: "Готово! Новый сорт сыра с названием {0} был успешно добавлен",
     Keys.ERROR_CHEESE_TYPE_EXIST: "Ошибка! Данный вид сыра уже существует",
     Keys.ERROR_EMPTY: "Ошибка! Ввод пустой",
-    Keys.SELECT_CHEESE_TYPE: "Введите сорт сыра",
+    Keys.SELECT_CHEESE_TYPE: "Выберите сорт сыра",
     Keys.ENTER_CHEESE_AMOUNT: "Введите количество",
     Keys.ENTER_CHEESE_PACKED_STATE: "Введите состояние",
     Keys.ERROR_NO_TYPE_EXIST: "Сорт {0} не существует в базе",
@@ -67,8 +72,9 @@ ru_map = {
     Keys.CHEESE_UNPACKED: "Не упакован",
     Keys.CHEESE_PACKED_STATE: "Введите состояние",
     Keys.ERROR_ADD_USER: "Ошибка! Пользователь уже существует",
-    Keys.ADD_CHEESE_SUCCESS: "Успех! Добавлена партия {0} в количестве {1}",
-    Keys.ERROR_BATCH_INSERT: "Ошибка! Партия уже существует!",
+    Keys.ADD_CHEESE_SUCCESS: "Успех! Добавлена партия {0} в количестве {1}. Фасовка: {2}",
+    Keys.ADD_CHEESE_SUCCESS_NO_PACKAGING: "Успех! Добавлена партия {0} в количестве {1}.",
+    Keys.ERROR_BATCH_INSERT: "Ошибка! Партия уже существует! Попробуйте заново!",
     Keys.ERROR_LOG_INSERT: "Ошибка! Невозможно добавить пользователя и команду в логи!",
     Keys.COMMAND_LOG_SUCCESS: "Было выполнено действие: {0}.\nВ команде: {1}",
     Keys.ENTER_CHEESE_BATCH: "Выберите номер партии:",
@@ -82,8 +88,12 @@ ru_map = {
     Keys.ACCESS_DENIED: "Ошибка! Вы не имеете доступа к этой команде!",
     Keys.ENTER_COMMENT: "Введите комментарий",
     Keys.COUNT_INPUT_ERROR_NUMERIC: "Ошибка! Ожидается число",
-    Keys.COUNT_INPUT_ERROR_OVERLOAD: "Ошибка! В партии меньше сыра, чем введено.",
-    Keys.USER_DELETED: "Пользователь {0} успешно удален из системы."
+    Keys.COUNT_INPUT_ERROR_OVERLOAD: "Ошибка! В партии меньше сыра, чем введено. Введите корректное количество!",
+    Keys.USER_DELETED: "Пользователь {0} успешно удален из системы.",
+    Keys.ENTER_PACKAGING: "Введите фасовку",
+    Keys.ACCESS_LEVEL_MANAGER: "Менеджер",
+    Keys.EMPLOYEE_ADD_CHEESE_SUCCESS: "Готово! Добавлена партия {0} в количестве {1}. Не забудьте указать номер партии и повесить табличку.",
+    Keys.CHEESE_VARIANT_DELETED: "Успех! Вид cыра с названием {0} удален из системы."
 }
 
 localization_map = ru_map

@@ -1,8 +1,8 @@
 from telegram.ext import ContextTypes, ConversationHandler, MessageHandler, filters
 from telegram import Update, KeyboardButton, ReplyKeyboardMarkup, KeyboardButtonRequestUser, ReplyKeyboardRemove
 
-from bot.command.basecommand import BaseConversation
-from bot.command.default_fallback import DefaultFallbackCommand
+from bot.commands.basecommand import BaseConversation
+from bot.commands.default_fallback import DefaultFallbackCommand
 from bot.database.model import database_proxy, UserTable
 from bot.entity.entities import AccessLevel
 from bot.feature.permissionchecker import checkUserAccess
@@ -64,4 +64,5 @@ class RemoveUserCommand(BaseConversation):
             text=localization_map[Keys.USER_DELETED].format(user_id),
             reply_markup=ReplyKeyboardRemove()
         )
+        context.user_data.clear()
         return ConversationHandler.END
