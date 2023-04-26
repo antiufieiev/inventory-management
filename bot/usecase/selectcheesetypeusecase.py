@@ -1,19 +1,26 @@
 from telegram import Update, InlineKeyboardButton, InlineKeyboardMarkup
 from telegram.ext import ContextTypes
+from typing import Callable
 
 from bot.database.model import CheeseVariants, database_proxy
 from bot.localization.localization import localization_map, Keys
 from bot.usecase.state_values import *
 
 
-async def prepareSelectCheeseTypeState(callback_filter: str, update: Update) -> int:
+async def prepareSelectCheeseTypeUseCase(
+        callback_filter: str,
+        update: Update,
+        button_name_mapper: Callable[[CheeseVariants], str] = lambda variant: variant.name,
+        filter_func: Callable[[CheeseVariants], bool] = lambda variant: True
+) -> int:
     with database_proxy.connection_context():
         variants = CheeseVariants.select()
+        variants_filtered = filter(filter_func, variants)
         data = list(
             map(lambda variant: InlineKeyboardButton(
-                text=variant.name,
+                text=button_name_mapper(variant),
                 callback_data=f"{callback_filter}{STATE_CHEESE_TYPE_SELECTED}:{variant.name}"
-            ), variants)
+            ), variants_filtered)
         )
         chunks = [data[x:x + 3] for x in range(0, len(data), 3)]
         reply_markup = InlineKeyboardMarkup(chunks)

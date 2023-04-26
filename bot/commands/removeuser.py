@@ -64,4 +64,5 @@ class RemoveUserCommand(BaseConversation):
             text=localization_map[Keys.USER_DELETED].format(user_id),
             reply_markup=ReplyKeyboardRemove()
         )
+        context.user_data.clear()
         return ConversationHandler.END

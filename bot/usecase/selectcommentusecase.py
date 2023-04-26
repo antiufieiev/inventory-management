@@ -5,7 +5,7 @@ from bot.usecase.state_values import *
 from bot.localization.localization import localization_map, Keys
 
 
-async def prepareSelectCommentState(update: Update, context: ContextTypes.DEFAULT_TYPE) -> int:
+async def prepareselectcommentusecase(update: Update, context: ContextTypes.DEFAULT_TYPE) -> int:
     await context.bot.send_message(
         chat_id=update.effective_chat.id,
         text=localization_map[Keys.ENTER_COMMENT]

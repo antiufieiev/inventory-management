@@ -58,10 +58,10 @@ class Packaging(BaseModel):
 class Batches(BaseModel):
     class Meta:
         db_table = 'batch'
-        primary_key = CompositeKey('cheese_id', 'batch_number')
+        primary_key = CompositeKey('cheese', 'batch_number')
 
     batch_number = CharField(unique=True)
-    cheese_id = ForeignKeyField(CheeseVariants, field='id', on_delete='CASCADE')
+    cheese = ForeignKeyField(CheeseVariants, field='id', on_delete='CASCADE')
     count = FloatField()
     packaging = ForeignKeyField(Packaging, on_delete='CASCADE', null=True)
     comment = TextField()

@@ -1,14 +1,13 @@
 from telegram import Update
 from telegram.ext import ContextTypes, ConversationHandler, CallbackQueryHandler
 
-from bot.database.model import database_proxy, CheeseVariants
 from bot.commands.basecommand import BaseConversation
 from bot.commands.default_fallback import DefaultFallbackCommand
 from bot.entity.entities import AccessLevel
 from bot.feature.permissionchecker import checkUserAccess
 from bot.localization.localization import localization_map, Keys
+from bot.usecase import selectcheesetypeusecase, removecheesetypeusecase
 from bot.usecase.state_values import *
-from bot.usecase import selectcheesetypestate, removecheesetypeusecase
 
 
 class RemoveCheeseTypeCommand(BaseConversation):
@@ -27,7 +26,7 @@ class RemoveCheeseTypeCommand(BaseConversation):
 
     async def executeCommand(self, update: Update, context: ContextTypes.DEFAULT_TYPE) -> int:
         if checkUserAccess(update) >= AccessLevel.ADMIN:
-            return await selectcheesetypestate.prepareSelectCheeseTypeState(self.callback_filter, update)
+            return await selectcheesetypeusecase.prepareSelectCheeseTypeUseCase(self.callback_filter, update)
         else:
             await update.effective_message.reply_text(
                 text=localization_map[Keys.ACCESS_DENIED],
@@ -48,7 +47,7 @@ class RemoveCheeseTypeCommand(BaseConversation):
 
     @staticmethod
     async def handleCheeseTypeSelected(data: str, update: Update, context: ContextTypes.DEFAULT_TYPE) -> int:
-        result = await selectcheesetypestate.onCheeseTypeSelected(data, update, context)
+        result = await selectcheesetypeusecase.onCheeseTypeSelected(data, update, context)
         if result != STATUS_SUCCESS:
             return result
 

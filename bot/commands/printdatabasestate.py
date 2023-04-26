@@ -20,7 +20,7 @@ class DatabaseStateCommand(BaseConversation):
             with database_proxy.connection_context():
                 for batch in Batches.select():
                     line = localization_map[Keys.PRINT_DATABASE_STATE_LINE].format(
-                        batch.cheese_id.name,
+                        batch.cheese.name,
                         batch.batch_number,
                         str(batch.count),
                         batch.comment
@@ -37,4 +37,5 @@ class DatabaseStateCommand(BaseConversation):
             await update.effective_message.reply_text(
                 text=localization_map[Keys.ACCESS_DENIED],
             )
+        context.user_data.clear()
         return ConversationHandler.END

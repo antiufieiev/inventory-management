@@ -88,7 +88,7 @@ ru_map = {
     Keys.ACCESS_DENIED: "Ошибка! Вы не имеете доступа к этой команде!",
     Keys.ENTER_COMMENT: "Введите комментарий",
     Keys.COUNT_INPUT_ERROR_NUMERIC: "Ошибка! Ожидается число",
-    Keys.COUNT_INPUT_ERROR_OVERLOAD: "Ошибка! В партии меньше сыра, чем введено.",
+    Keys.COUNT_INPUT_ERROR_OVERLOAD: "Ошибка! В партии меньше сыра, чем введено. Введите корректное количество!",
     Keys.USER_DELETED: "Пользователь {0} успешно удален из системы.",
     Keys.ENTER_PACKAGING: "Введите фасовку",
     Keys.ACCESS_LEVEL_MANAGER: "Менеджер",

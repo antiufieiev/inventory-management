@@ -58,4 +58,5 @@ class UserHistoryCommand(BaseConversation):
                     text=localization_map[Keys.PRINT_LOG].format(str(log.user_id), log.text, str(log.date)),
                     reply_markup=ReplyKeyboardRemove()
                 )
+        context.user_data.clear()
         return ConversationHandler.END

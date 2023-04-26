@@ -16,12 +16,10 @@ def getCurrentTime():
 
 class ActivityLogger(object):
 
-    def __init__(self, command_name, user_id, input_text: str):
+    def __init__(self, command_name):
         self.command_name = command_name
-        self.user_id = user_id
-        self.input_text = input_text
 
-    async def logActivity(self, update: Update, context: ContextTypes.DEFAULT_TYPE):
+    async def logActivity(self, text: str, update: Update, context: ContextTypes.DEFAULT_TYPE):
         if not update.effective_message.text.strip():
             await context.bot.send_message(
                 chat_id=update.effective_chat.id,
@@ -30,8 +28,8 @@ class ActivityLogger(object):
 
         try:
             Logs(
-                user_id=self.user_id,
-                text=localization_map[Keys.COMMAND_LOG_SUCCESS].format(self.input_text, self.command_name),
+                user_id=update.effective_user.id,
+                text=localization_map[Keys.COMMAND_LOG_SUCCESS].format(text, self.command_name),
                 date=getCurrentTime()
             ).save()
 

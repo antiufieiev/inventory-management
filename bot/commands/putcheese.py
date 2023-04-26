@@ -4,14 +4,12 @@ import peewee
 import pytz
 from telegram.ext import MessageHandler, filters, CallbackQueryHandler
 
-from bot.commands.basecommand import *
 from bot.commands.default_fallback import *
-from bot.usecase import selectcountstate, selectpackagingstate, selectispackagedstate, selectcommentstate, \
-    selectcheesetypestate
 from bot.database.model import Batches, database_proxy, Packaging
-from bot.feature.activitylogger import ActivityLogger
 from bot.feature.permissionchecker import checkUserAccess
 from bot.localization.localization import *
+from bot.usecase import selectcountstate, selectpackagingusecase, selectispackagedusecase, selectcommentusecase, \
+    selectcheesetypeusecase
 from bot.usecase.state_values import *
 
 
@@ -19,7 +17,7 @@ class PutCheeseCommand(BaseConversation):
 
     def __init__(self):
         super(PutCheeseCommand, self).__init__(
-            command_name="put_cheese",
+            command_name="putcheese",
             fallback_command=DefaultFallbackCommand()
         )
 
@@ -48,7 +46,7 @@ class PutCheeseCommand(BaseConversation):
 
     async def executeCommand(self, update: Update, context: ContextTypes.DEFAULT_TYPE) -> int:
         if checkUserAccess(update) >= AccessLevel.EMPLOYEE:
-            return await selectcheesetypestate.prepareSelectCheeseTypeState(self.callback_filter, update)
+            return await selectcheesetypeusecase.prepareSelectCheeseTypeUseCase(self.callback_filter, update)
         else:
             await update.effective_message.reply_text(
                 text=localization_map[Keys.ACCESS_DENIED],
@@ -72,37 +70,42 @@ class PutCheeseCommand(BaseConversation):
         return new_state
 
     async def handleTypeSelected(self, cheese_type: str, update: Update, context: ContextTypes.DEFAULT_TYPE) -> int:
-        result = await selectcheesetypestate.onCheeseTypeSelected(cheese_type, update, context)
+        result = await selectcheesetypeusecase.onCheeseTypeSelected(cheese_type, update, context)
         if result != STATUS_SUCCESS:
             return result
 
         if checkUserAccess(update) >= AccessLevel.MANAGER:
-            return await selectispackagedstate.prepareIsPackagedState(self.callback_filter, update)
+            return await selectispackagedusecase.prepareIsPackagedState(self.callback_filter, update)
         else:
             return await selectcountstate.prepareCountState(update, context)
 
-    @staticmethod
-    async def handleCountEntered(update: Update, context: ContextTypes.DEFAULT_TYPE) -> int:
-        selectcountstate.handleCountEntered(update, context)
-        return await selectcommentstate.prepareSelectCommentState(update, context)
+    async def handleCountEntered(self, update: Update, context: ContextTypes.DEFAULT_TYPE) -> int:
+        result = await selectcountstate.handleCountEntered(update, context)
+        if result != STATUS_SUCCESS:
+            return result
+        if checkUserAccess(update) >= AccessLevel.MANAGER:
+            return await selectcommentusecase.prepareselectcommentusecase(update, context)
+        else:
+            context.user_data["comment"] = ""
+            return await self.finalize(update, context)
 
     async def handlePackedEntered(self, packed_state: str, update: Update, context: ContextTypes.DEFAULT_TYPE) -> int:
-        result = await selectispackagedstate.onIsPackagedStateSelected(packed_state, update, context)
+        result = await selectispackagedusecase.onIsPackagedStateSelected(packed_state, update, context)
         if result != STATUS_SUCCESS:
             return result
         if context.user_data["is_packed"]:
-            return await selectpackagingstate.preparePackagingState(self.callback_filter, update, context)
+            return await selectpackagingusecase.preparePackagingState(self.callback_filter, update, context)
         else:
             return await selectcountstate.prepareCountState(update, context)
 
     @staticmethod
     async def handlePackagingFormatSelected(packaging_id: str, update: Update,
                                             context: ContextTypes.DEFAULT_TYPE) -> int:
-        selectpackagingstate.handlePackagingFormatSelected(packaging_id, context)
+        selectpackagingusecase.handlePackagingFormatSelected(packaging_id, context)
         return await selectcountstate.prepareCountState(update, context)
 
     async def handleCommentResponse(self, update: Update, context: ContextTypes.DEFAULT_TYPE) -> int:
-        result = await selectcommentstate.handleCommentSelected(update, context)
+        result = await selectcommentusecase.handleCommentSelected(update, context)
         if result != STATUS_SUCCESS:
             return result
         return await self.finalize(update, context)
@@ -119,13 +122,12 @@ class PutCheeseCommand(BaseConversation):
             with database_proxy.connection_context():
                 batch = self.generateBatchName(cheese_id)
                 Batches(
-                    cheese_id=cheese_id,
+                    cheese=cheese_id,
                     batch_number=batch,
                     count=count,
                     packaging_id=packaging_id,
                     comment=comment
                 ).save(force_insert=True)
-                context.user_data.clear()
                 if is_packed:
                     packagingModel = Packaging.get(Packaging.id == packaging_id)
                     input_text = localization_map[Keys.ADD_CHEESE_SUCCESS]\
@@ -139,8 +141,8 @@ class PutCheeseCommand(BaseConversation):
                     chat_id=update.effective_chat.id,
                     text=input_text
                 )
-                active = ActivityLogger(self.command_name, update.effective_user.id, input_text)
-                await active.logActivity(update, context)
+                await self.logger.logActivity(input_text, update, context)
+                context.user_data.clear()
                 return ConversationHandler.END
         except peewee.IntegrityError:
             await context.bot.send_message(
@@ -155,7 +157,7 @@ class PutCheeseCommand(BaseConversation):
         date = datetime.now(european)
         batch = date.strftime("%d%m%y") + str(cheese_id)
         existing_batches = Batches.select().order_by(Batches.batch_number).where(
-            Batches.cheese_id == cheese_id and Batches.batch_number.startswith(batch)
+            Batches.cheese == cheese_id and Batches.batch_number.startswith(batch)
         )
         suffix = ""
         if existing_batches.count() > 0:

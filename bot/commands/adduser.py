@@ -93,8 +93,7 @@ class AddUserCommand(BaseConversation):
                         text=input_text,
                         reply_markup=ReplyKeyboardRemove()
                     )
-                    active = ActivityLogger(self.command_name, update.effective_user.id, input_text)
-                    await active.logActivity(update, context)
+                    await self.logger.logActivity(input_text, update, context)
             except peewee.IntegrityError:
                 await context.bot.send_message(
                     chat_id=update.effective_chat.id,
@@ -107,5 +106,5 @@ class AddUserCommand(BaseConversation):
                 text=localization_map[Keys.USE_KEYBOARD_AS_INPUT_ERROR]
             )
             return self.STATE_USER_SELECTED
-
+        context.user_data.clear()
         return ConversationHandler.END
