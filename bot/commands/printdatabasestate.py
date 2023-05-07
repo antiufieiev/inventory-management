@@ -18,14 +18,13 @@ class DatabaseStateCommand(BaseConversation):
             packed = ''
             unpacked = ''
             with database_proxy.connection_context():
-                for batch in Batches.select(Batches):
+                for batch in Batches.select():
                     if batch.packaging is not None:
                         line = localization_map[Keys.PRINT_DATABASE_STATE_LINE_PACKED].format(
                             batch.cheese.name,
                             batch.packaging.packaging,
                             str(batch.count),
                             batch.comment
-
                         )
                         packed += line
                     if batch.packaging is None:

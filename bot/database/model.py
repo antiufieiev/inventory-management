@@ -52,7 +52,7 @@ class Packaging(BaseModel):
     class Meta:
         db_table = "packaging"
 
-    packaging    = FloatField(unique=True)
+    packaging = FloatField(unique=True)
 
 
 class Batches(BaseModel):
