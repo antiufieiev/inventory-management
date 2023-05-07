@@ -3,7 +3,8 @@ from typing import Any
 from telegram import Update
 from telegram.ext import CommandHandler, ContextTypes, ConversationHandler, BaseHandler, CallbackContext
 
-from entity.entities import AccessLevel
+from bot.entity.entities import AccessLevel
+from bot.feature.activitylogger import ActivityLogger
 
 
 class BaseCommand(object):
@@ -12,6 +13,7 @@ class BaseCommand(object):
         self.command_name = command_name
         self.callback_filter = command_name
         self.access_level = AccessLevel.EMPLOYEE
+        self.logger = ActivityLogger(self.command_name)
 
     def createTelegramCommand(self) -> CommandHandler:
         return CommandHandler(self.command_name, self.executeCommand)
@@ -29,6 +31,7 @@ class BaseConversation(BaseCommand):
         self.command_name = command_name
         self.callback_filter = command_name
         self.fallback_command = fallback_command
+        self.logger = ActivityLogger(self.command_name)
 
     def createTelegramCommand(self) -> CommandHandler:
         return CommandHandler(self.command_name, self.executeCommand)

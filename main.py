@@ -3,13 +3,15 @@ import os
 
 from telegram.ext import ApplicationBuilder
 
-import database.storage
-from command.addcheese import *
-from command.adduser import *
-from command.printdatabasestate import *
-from command.printuserhistory import *
-from command.putcheese import *
-from command.removecheese import *
+import bot.database.storage
+from bot.commands.addcheese import *
+from bot.commands.adduser import *
+from bot.commands.printdatabasestate import *
+from bot.commands.printuserhistory import *
+from bot.commands.putcheese import *
+from bot.commands.removecheese import *
+from bot.commands.removeuser import RemoveUserCommand
+from bot.commands.removecheesetype import *
 
 logging.basicConfig(
     format='%(asctime)s - %(name)s - %(levelname)s - %(message)s',
@@ -22,12 +24,12 @@ async def start(update: Update, context: ContextTypes.DEFAULT_TYPE):
 
 
 async def unknown(update: Update, context: ContextTypes.DEFAULT_TYPE):
-    await context.bot.send_message(chat_id=update.effective_chat.id, text="Sorry, I didn't understand that command")
+    await context.bot.send_message(chat_id=update.effective_chat.id, text="Sorry, I didn't understand that commands")
 
 
 if __name__ == '__main__':
 
-    database.storage.initStorage()
+    bot.database.storage.initStorage()
     token = ''
     if os.environ['PRODUCTION'] == 'true':
         token = os.environ['PRODUCTION_TELEGRAM_TOKEN']
@@ -38,11 +40,13 @@ if __name__ == '__main__':
 
     application.add_handler(CommandHandler('start', start))
     application.add_handler(AddUserCommand().createTelegramConversation())
+    application.add_handler(RemoveUserCommand().createTelegramConversation())
     application.add_handler(AddCheeseCommand().createTelegramConversation())
     application.add_handler(PutCheeseCommand().createTelegramConversation())
     application.add_handler(RemoveCheeseCommand().createTelegramConversation())
     application.add_handler(UserHistoryCommand().createTelegramConversation())
     application.add_handler(DatabaseStateCommand().createTelegramCommand())
+    application.add_handler(RemoveCheeseTypeCommand().createTelegramConversation())
     application.add_handler(MessageHandler(filters.TEXT, unknown))
 
     application.run_polling()

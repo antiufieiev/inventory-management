@@ -1,6 +1,7 @@
 import time
+import peewee
 
-from peewee import *
+from playhouse.migrate import *
 
 
 def connect_db(db, retries=3, delay=5):
@@ -22,6 +23,7 @@ class ReconnectingProxy(Proxy):
 
 
 database_proxy = ReconnectingProxy()
+database_version = 1
 
 
 class BaseModel(Model):
@@ -35,6 +37,7 @@ class UserTable(BaseModel):
 
     user_id = IntegerField(unique=True)
     access_level = IntegerField(default=0)
+    username = CharField(default='')
 
 
 class CheeseVariants(BaseModel):
@@ -45,15 +48,22 @@ class CheeseVariants(BaseModel):
     name = CharField(unique=True)
 
 
+class Packaging(BaseModel):
+    class Meta:
+        db_table = "packaging"
+
+    packaging = FloatField(unique=True)
+
+
 class Batches(BaseModel):
     class Meta:
         db_table = 'batch'
-        primary_key = CompositeKey('cheese_id', 'batch_number', 'packed')
+        primary_key = CompositeKey('cheese', 'batch_number')
 
     batch_number = CharField(unique=True)
-    cheese_id = ForeignKeyField(CheeseVariants, field='id', on_delete='CASCADE')
+    cheese = ForeignKeyField(CheeseVariants, field='id', on_delete='CASCADE')
     count = FloatField()
-    packed = BooleanField()
+    packaging = ForeignKeyField(Packaging, on_delete='CASCADE', null=True)
     comment = TextField()
 
 
@@ -64,3 +74,10 @@ class Logs(BaseModel):
     user_id = IntegerField()
     text = CharField()
     date = DateTimeField()
+
+
+class DatabaseMetadata(BaseModel):
+    class Meta:
+        db_table = "db_metadata"
+
+    version = IntegerField(primary_key=True)

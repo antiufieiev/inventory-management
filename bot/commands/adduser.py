@@ -2,12 +2,12 @@ import peewee
 from telegram import ReplyKeyboardMarkup, ReplyKeyboardRemove, KeyboardButtonRequestUser, KeyboardButton
 from telegram.ext import MessageHandler, filters
 
-from command.basecommand import *
-from command.default_fallback import *
-from database.model import UserTable, database_proxy
-from feature.activitylogger import ActivityLogger
-from feature.permissionchecker import checkUserAccess
-from localization.localization import *
+from bot.commands.basecommand import *
+from bot.commands.default_fallback import *
+from bot.database.model import UserTable, database_proxy
+from bot.feature.activitylogger import ActivityLogger
+from bot.feature.permissionchecker import checkUserAccess
+from bot.localization.localization import *
 
 
 class AddUserCommand(BaseConversation):
@@ -53,7 +53,8 @@ class AddUserCommand(BaseConversation):
         keyboard = [
             [
                 localization_map[Keys.ACCESS_LEVEL_ADMIN],
-                localization_map[Keys.ACCESS_LEVEL_EMPLOYEE]
+                localization_map[Keys.ACCESS_LEVEL_EMPLOYEE],
+                localization_map[Keys.ACCESS_LEVEL_MANAGER]
             ]
         ]
         reply_markup = ReplyKeyboardMarkup(keyboard, resize_keyboard=True, one_time_keyboard=True)
@@ -66,9 +67,9 @@ class AddUserCommand(BaseConversation):
 
     async def handleAccessLevelSelection(self, update: Update, context: ContextTypes.DEFAULT_TYPE) -> int:
         user_id = context.user_data["user_id"]
-        print(update.message.text)
         if (update.message.text == localization_map[Keys.ACCESS_LEVEL_EMPLOYEE]
-                or update.message.text == localization_map[Keys.ACCESS_LEVEL_ADMIN]):
+                or update.message.text == localization_map[Keys.ACCESS_LEVEL_ADMIN]
+                or update.message.text == localization_map[Keys.ACCESS_LEVEL_MANAGER]):
 
             access_level = update.message.text
             access_level_int = -1
@@ -77,6 +78,8 @@ class AddUserCommand(BaseConversation):
                 access_level_int = AccessLevel.ADMIN
             if access_level == localization_map[Keys.EMPLOYEE]:
                 access_level_int = AccessLevel.EMPLOYEE
+            if access_level == localization_map[Keys.ACCESS_LEVEL_MANAGER]:
+                access_level_int = AccessLevel.MANAGER
 
             try:
                 with database_proxy.connection_context():
@@ -90,8 +93,7 @@ class AddUserCommand(BaseConversation):
                         text=input_text,
                         reply_markup=ReplyKeyboardRemove()
                     )
-                    active = ActivityLogger(self.command_name, update.effective_user.id, input_text)
-                    await active.logActivity(update, context)
+                    await self.logger.logActivity(input_text, update, context)
             except peewee.IntegrityError:
                 await context.bot.send_message(
                     chat_id=update.effective_chat.id,
@@ -104,5 +106,5 @@ class AddUserCommand(BaseConversation):
                 text=localization_map[Keys.USE_KEYBOARD_AS_INPUT_ERROR]
             )
             return self.STATE_USER_SELECTED
-
+        context.user_data.clear()
         return ConversationHandler.END

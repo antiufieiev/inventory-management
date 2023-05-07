@@ -1,13 +1,11 @@
 import peewee
 from telegram.ext import MessageHandler, filters
 
-from command.basecommand import *
-from command.default_fallback import *
-from database.model import database_proxy
-from database.storage import CheeseVariants
-from feature.activitylogger import ActivityLogger
-from feature.permissionchecker import checkUserAccess
-from localization.localization import *
+from bot.commands.default_fallback import *
+from bot.database.model import database_proxy
+from bot.database.storage import CheeseVariants
+from bot.feature.permissionchecker import checkUserAccess
+from bot.localization.localization import *
 
 
 class AddCheeseCommand(BaseConversation):
@@ -51,12 +49,11 @@ class AddCheeseCommand(BaseConversation):
                     text=input_text
                 )
 
-                active = ActivityLogger(self.command_name, update.effective_user.id, input_text)
-                await active.logActivity(update, context)
+                await self.logger.logActivity(input_text, update, context)
         except peewee.IntegrityError:
             await context.bot.send_message(
                 chat_id=update.effective_chat.id,
                 text=localization_map[Keys.ERROR_CHEESE_TYPE_EXIST]
             )
-
+        context.user_data.clear()
         return ConversationHandler.END
