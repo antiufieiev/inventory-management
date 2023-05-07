@@ -27,7 +27,7 @@ services:
     build:
       context: .
       dockerfile: Dockerfile
-    image: inventory-management-bot:0.0.6-beta02
+    image: inventory-management-bot:0.0.6-beta03
     container_name: inventory-management-bot
     restart: always
     depends_on:
