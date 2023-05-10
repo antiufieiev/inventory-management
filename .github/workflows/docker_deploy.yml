@@ -14,18 +14,15 @@ jobs:
         - name: pass envars
           uses: ./
           env:
-            MYSQL_ROOT_PASSWORD: ${{secrets.MYSQL_ROOT_PASSWORD}}
-            MYSQL_DATABASE: ${{secrets.MYSQL_DATABASE}}
-            MYSQL_USER: ${{secrets.MYSQL_USER}}
-            MYSQL_PASSWORD: ${{secrets.MYSQL_PASSWORD}}
-            MYSQL_TCP_PORT: ${{secrets.MYSQL_TCP_PORT}}
+            HOST_PORT: ${{secrets.HOST_PORT}}
           with:
             host: ${{ secrets.HOST_IP }}
             username: ${{ secrets.HOST_USERNAME }}
             key: ${{ secrets.HOSDT_KEY }}
             port: ${{ secrets.HOST_PORT }}
-            #envs: MYSQL_ROOT_PASSWORD,MYSQL_DATABASE,MYSQL_USER,MYSQL_PASSWORD,MYSQL_TCP_PORT
+            envs: HOST_PORT
             script: |
+              echo 
               touch test.yml
               ls -la
 
