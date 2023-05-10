@@ -1,14 +1,14 @@
 name: remote ssh deploy
 on: workflow_dispatch
 env:
-  PROD_DATABASE_HOST = asas
-  PROD_DATABASE_NAME = asas 
-  PROD_DATABASE_PASS = asas 
-  PROD_DATABASE_PORT = asas 
-  PROD_DATABASE_ROOT = asas 
-  PROD_DATABASE_USER = asas 
-  PRODUCTION = true
-  PRODUCTION_TELEGRAM_TOKEN = asas
+  PROD_DATABASE_HOST: "asas"
+  PROD_DATABASE_NAME: "asas" 
+  PROD_DATABASE_PASS: "asas" 
+  PROD_DATABASE_PORT: "asas" 
+  PROD_DATABASE_ROOT: "asas" 
+  PROD_DATABASE_USER: "asas" 
+  PRODUCTION: true
+  PRODUCTION_TELEGRAM_TOKEN: "asas" 
 
 jobs:
 
