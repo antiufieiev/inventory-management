@@ -23,7 +23,7 @@ jobs:
           uses: actions/checkout@v1
     
         - name: pass envars
-          uses: ./
+          uses: appleboy/ssh-action@v0.1.10
           env:
             HOST_PORT: ${{secrets.HOST_PORT}}
           with:
