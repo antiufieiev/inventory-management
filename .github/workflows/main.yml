@@ -1,0 +1,36 @@
+name: remote ssh deploy
+on:
+    push:
+      branches: [ "main"]
+
+jobs:
+
+
+    deploy:
+        name: git clone and pull
+        runs-on: ubuntu-latest
+        steps:
+        - name: checkout
+          uses: actions/checkout@v1
+    
+        - name: pass envars
+          uses: ./
+          env:
+            MYSQL_ROOT_PASSWORD: ${{secrets.MYSQL_ROOT_PASSWORD}}
+            MYSQL_DATABASE: ${{secrets.MYSQL_DATABASE}}
+            MYSQL_USER: ${{secrets.MYSQL_USER}}
+            MYSQL_PASSWORD: ${{secrets.MYSQL_PASSWORD}}
+            MYSQL_TCP_PORT: ${{secrets.MYSQL_TCP_PORT}}
+          with:
+            host: ${{ secrets.HOST_IP }}
+            username: ${{ secrets.HOST_USERNAME }}
+            key: ${{ secrets.HOSDT_KEY }}
+            port: ${{ secrets.HOST_PORT }}
+            #envs: MYSQL_ROOT_PASSWORD,MYSQL_DATABASE,MYSQL_USER,MYSQL_PASSWORD,MYSQL_TCP_PORT
+            script: |
+              touch test.yml
+              ls -la
+
+
+
+              
