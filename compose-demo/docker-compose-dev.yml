@@ -1,0 +1,46 @@
+version: '3.9'
+services:
+  mysql:
+    platform: "linux/amd64"
+    image: mysql:8.0
+    restart: always
+    container_name: inventory-management-database
+    environment:
+      - MYSQL_ROOT_PASSWORD=${DEV_DATABASE_ROOT_PASS}
+      - MYSQL_DATABASE=${DEV_DATABASE_NAME}
+      - MYSQL_USER=${DEV_DATABASE_USER}
+      - MYSQL_PASSWORD=${DEV_DATABASE_PASS}
+      - MYSQL_TCP_PORT=${DEV_DATABASE_PORT}
+    volumes:
+      - db_inventory:/usr/local/mysql/data
+    ports:
+      - '10000:3307'
+    expose:
+      - '10000'
+    healthcheck:
+      test: [ "CMD", "mysqladmin" ,"ping", "-h", "localhost" ]
+      timeout: 10s
+      retries: 10
+
+  inventory-management-bot:
+    platform: "linux/amd64"
+    build:
+      context: .
+      dockerfile: Dockerfile
+    image: inventory-management-bot:0.0.6-beta03
+    container_name: inventory-management-bot
+    restart: always
+    depends_on:
+      mysql:
+        condition: service_healthy
+    environment:
+      - MYSQL_ROOT_PASSWORD=${DEV_DATABASE_ROOT_PASS}
+      - MYSQL_DATABASE=${DEV_DATABASE_NAME}
+      - MYSQL_USER=${DEV_DATABASE_USER}
+      - MYSQL_PASSWORD=${DEV_DATABASE_PASS}
+      - MYSQL_HOST=${DEV_DATABASE_HOST}
+      - MYSQL_PORT=${DEV_DATABASE_PORT}
+      - PRODUCTION_TELEGRAM_TOKEN=${PRODUCTION_TELEGRAM_TOKEN}
+      - PRODUCTION=true
+volumes:
+  db_inventory:
