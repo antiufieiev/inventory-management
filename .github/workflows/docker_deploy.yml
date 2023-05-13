@@ -13,20 +13,20 @@ env:
 
 jobs:
 
-
-
     deploy:
         name: git clone and pull
         runs-on: ubuntu-latest
+
         steps:
+
         - name: checkout
           uses: actions/checkout@v1
 
         - name: Install SSH Key
           uses: shimataro/ssh-key-action@v2
           with:
-            key: ${{ secrets.SSH_PRIVATE_KEY }}
-            known_hosts: unnecessary
+            key: ${{ secrets.HOST_PRIVATE_KEY }}
+            known_hosts: 'unnecessary'
   
         - name: Adding Known Hosts
           run: ssh-keyscan -p ${{ secrets.HOST_PORT}} -H ${{ secrets.HOST_IP }}  >> ~/.ssh/known_hosts
