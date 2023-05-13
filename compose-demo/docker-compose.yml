@@ -1,6 +1,6 @@
 version: '3.7'
 services:
   web:
-    image: ghcr.io/antiufieiev/inventory-management-bot/test-local-alpine:latest 
+    image: "ghcr.io/antiufieiev/inventory-management-bot/test-local-alpine:latest" 
     ports:
       - "8000:80"
