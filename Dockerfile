@@ -1,4 +1,4 @@
-FROM python:3.9.12
+FROM python:3.9-alpine3.17
 
 WORKDIR /inventory_management_bot
 
