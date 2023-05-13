@@ -33,4 +33,7 @@ jobs:
         - name: docker-deploy-test
           run: |
             pwd
+            ls -la
+            ls -la ./compose-demo/
+            cat ./compose-demo/docker-compose.yml
             docker compose -f ./compose-demo/docker-compose.yml up -d --force-recreate --remove-orphans
