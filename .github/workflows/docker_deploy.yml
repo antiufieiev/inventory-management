@@ -34,6 +34,12 @@ jobs:
           # This is where you will update the personal access token to GITHUB_TOKEN
           run: echo "${{ secrets.GITHUB_TOKEN }}" | docker login ghcr.io -u $ --password-stdin
 
+        - name: image-test
+          run: |
+            docker images
+            docker pull ghcr.io/antiufieiev/inventory-management-bot/test-local-alpine:latest
+            docker images
+
         - name: docker-deploy-test
           run: |
             pwd
