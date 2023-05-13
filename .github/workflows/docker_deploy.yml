@@ -37,10 +37,11 @@ jobs:
             unset DOCKER_HOST
             docker context ls
             docker context create remote1 --docker "host=ssh://${{ secrets.HOST_USERNAME }}@${{ secrets.HOST_IP }}"
+            docker context use remote1
             docker context ls
 
         - name: docker-deploy-test
-          run: docker compose -f ./compose-demo/docker-compose.ym
+          run: docker compose -f ./compose-demo/docker-compose.yml up -d 
 
 
 
