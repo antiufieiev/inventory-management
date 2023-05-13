@@ -21,19 +21,27 @@ jobs:
         steps:
         - name: checkout
           uses: actions/checkout@v1
-    
-        - name: pass envars
-          uses: appleboy/ssh-action@v0.1.10
-          env:
-            HOST_PORT: ${{secrets.HOST_PORT}}
+
+        - name: Install SSH Key
+          uses: shimataro/ssh-key-action@v2
           with:
-            host: ${{ secrets.HOST_IP }}
-            username: ${{ secrets.HOST_USERNAME }}
-            password: ${{ secrets.HOST_KEY }}
-            port: ${{ secrets.HOST_PORT }}
-            envs: HOST_PORT
-            script: |
-              echo 
-              touch test.yml
-              ls -la
+            key: ${{ secrets.SSH_PRIVATE_KEY }}
+            known_hosts: unnecessary
+  
+        - name: Adding Known Hosts
+          run: ssh-keyscan -p ${{ secrets.HOST_PORT}} -H ${{ secrets.HOST_IP }}  >> ~/.ssh/known_hosts
+  
+        - name: Adding docker context
+          run: |
+            docker compose version
+            unset DOCKER_HOST
+            docker context ls
+            docker context create remote1 --docker "host=ssh://${{ secrets.HOST_USERNAME }}@${{ secrets.HOST_IP }}"
+            docker context ls
+
+        - name: docker-deploy-test
+          run: docker compose -f ./compose-demo/docker-compose.ym
+
+
+
 
