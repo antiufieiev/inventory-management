@@ -31,8 +31,4 @@ jobs:
             docker context ls
 
         - name: docker-deploy-test
-          run: docker compose -f ./compose-demo/docker-compose.yml up -d 
-
-
-
-
+          run: docker compose -f ./compose-demo/docker-compose.yml up -d --force-recreate --remove-orphans
