@@ -6,10 +6,10 @@ services:
     restart: always
     container_name: inventory-management-database
     environment:
-      - MYSQL_ROOT_PASSWORD=${PROD_DATABASE_ROOT_PASS}
+      - MYSQL_ROOT_PASSWORD=${DATABASE_PASS}
       - MYSQL_DATABASE=${PROD_DATABASE_NAME}
       - MYSQL_USER=${PROD_DATABASE_USER}
-      - MYSQL_PASSWORD=${PROD_DATABASE_PASS}
+      - MYSQL_PASSWORD=${DATABASE_PASS}
       - MYSQL_TCP_PORT=${PROD_DATABASE_PORT}
     volumes:
       - db_inventory:/usr/local/mysql/data
@@ -31,10 +31,10 @@ services:
       mysql:
         condition: service_healthy
     environment:
-      - MYSQL_ROOT_PASSWORD=${PROD_DATABASE_ROOT_PASS}
+      - MYSQL_ROOT_PASSWORD=${DATABASE_PASS}
       - MYSQL_DATABASE=${PROD_DATABASE_NAME}
       - MYSQL_USER=${PROD_DATABASE_USER}
-      - MYSQL_PASSWORD=${PROD_DATABASE_PASS}
+      - MYSQL_PASSWORD=${DATABASE_PASS}
       - MYSQL_HOST=${PROD_DATABASE_HOST}
       - MYSQL_PORT=${PROD_DATABASE_PORT}
       - PRODUCTION_TELEGRAM_TOKEN=${DEBUG_TELEGRAM_TOKEN}
