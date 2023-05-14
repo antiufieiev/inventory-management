@@ -34,16 +34,11 @@ jobs:
           # This is where you will update the personal access token to GITHUB_TOKEN
           run: echo "${{ secrets.GITHUB_TOKEN }}" | docker login ghcr.io -u $ --password-stdin
 
+        - name: 'Create env file'
+          run: |
+            echo "${{ secrets.ENV_FILE }}" > ./compose-demo/.env
+
         - name: docker-deploy-test
-          env:
-            PROD_DATABASE_ROOT_PASS: ${{secrets.PROD_DATABASE_ROOT_PASS}}
-            PROD_DATABASE_NAME: ${{secrets.PROD_DATABASE_NAME}}
-            PROD_DATABASE_USER: ${{secrets.PROD_DATABASE_USER}}
-            PROD_DATABASE_PASS: ${{secrets.PROD_DATABASE_PASS}}
-            PROD_DATABASE_HOST: ${{secrets.PROD_DATABASE_HOST}}
-            PRODUCTION_TELEGRAM_TOKEN: ${{secrets.DEBUG_TELEGRAM_TOKEN}}
-            DEBUG_TELEGRAM_TOKEN: ${{secrets.DEBUG_TELEGRAM_TOKEN}}
-            PRODUCTION: false
           run: |
             pwd
             ls -la
