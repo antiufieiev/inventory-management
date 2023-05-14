@@ -6,10 +6,10 @@ services:
     restart: unless-stopped
     container_name: inventory-management-database-test
     environment:
-      - MYSQL_ROOT_PASSWORD=NotAPass
+      - MYSQL_ROOT_PASSWORD=${PROD_DATABASE_PASS}
       - MYSQL_DATABASE=tester
       - MYSQL_USER=management-tester
-      - MYSQL_PASSWORD=NotAPass
+      - MYSQL_PASSWORD=${PROD_DATABASE_PASS}
       - MYSQL_TCP_PORT=3307
     volumes:
       - db_inventory:/usr/local/mysql/data
