@@ -10,7 +10,7 @@ services:
       - MYSQL_DATABASE="${PROD_DATABASE_NAME}"
       - MYSQL_USER="${PROD_DATABASE_USER}"
       - MYSQL_PASSWORD="${PROD_DATABASE_PASS}"
-      - MYSQL_TCP_PORT="${PROD_DATABASE_PORT}"
+      - MYSQL_TCP_PORT=3307
     volumes:
       - db_inventory:/usr/local/mysql/data
     ports:
@@ -36,7 +36,7 @@ services:
       - MYSQL_USER="${PROD_DATABASE_USER}"
       - MYSQL_PASSWORD="${PROD_DATABASE_PASS}"
       - MYSQL_HOST="${PROD_DATABASE_HOST}"
-      - MYSQL_PORT="${PROD_DATABASE_PORT}"
+      - MYSQL_PORT=3307
       - PRODUCTION_TELEGRAM_TOKEN="${DEBUG_TELEGRAM_TOKEN}"
       - DEBUG_TELEGRAM_TOKEN="${DEBUG_TELEGRAM_TOKEN}"
       - PRODUCTION=fasle
