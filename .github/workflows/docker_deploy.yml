@@ -49,5 +49,5 @@ jobs:
             pwd
             ls -la
             ls -la ./compose-demo/
-            cat ./compose-demo/docker-compose.yml
+            cat ./compose-demo/docker-compose-dev.yml
             docker compose -f ./compose-demo/docker-compose-dev.yml up -d --force-recreate --remove-orphans
