@@ -41,7 +41,7 @@ jobs:
             PROD_DATABASE_USER: ${{secrets.PROD_DATABASE_USER}}
             PROD_DATABASE_PASS: ${{secrets.PROD_DATABASE_PASS}}
             PROD_DATABASE_HOST: ${{secrets.PROD_DATABASE_HOST}}
-            PROD_DATABASE_PORT: 3307
+            PROD_DATABASE_PORT: "3307"
             PRODUCTION_TELEGRAM_TOKEN: ${{secrets.DEBUG_TELEGRAM_TOKEN}}
             DEBUG_TELEGRAM_TOKEN: ${{secrets.DEBUG_TELEGRAM_TOKEN}}
             PRODUCTION: false
