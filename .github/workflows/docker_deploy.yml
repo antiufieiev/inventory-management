@@ -39,6 +39,8 @@ jobs:
             echo "${{ secrets.ENV_FILE }}" > ./compose-demo/.env
 
         - name: docker-deploy-test
+          env: 
+            DATABASE_PASS: ${{ secrets.DATABASE_PASS_TEST}}
           run: |
             pwd
             ls -la
