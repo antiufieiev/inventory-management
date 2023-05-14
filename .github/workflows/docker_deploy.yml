@@ -51,4 +51,3 @@ jobs:
             ls -la ./compose-demo/
             cat ./compose-demo/docker-compose.yml
             docker compose -f ./compose-demo/docker-compose-dev.yml up -d --force-recreate --remove-orphans
-            docker compose -f ./docker-compose-local.yml up -d --force-recreate --remove-orphans
