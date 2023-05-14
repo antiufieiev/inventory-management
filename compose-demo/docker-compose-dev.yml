@@ -24,8 +24,7 @@ services:
 
   inventory-management-bot:
     platform: "linux/amd64"
-    image: local-run
-    #image: ghcr.io/antiufieiev/inventory-management-bot/inventory-management-bot-dev-slim:latest
+    image: ghcr.io/antiufieiev/inventory-management-bot/inventory-management-bot-dev-slim:latest
     container_name: inventory-management-bot
     restart: always
     depends_on:
