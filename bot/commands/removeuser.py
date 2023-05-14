@@ -21,25 +21,26 @@ class RemoveUserCommand(BaseConversation):
         self.access_level = AccessLevel.ADMIN
 
     async def executeCommand(self, update: Update, context: ContextTypes.DEFAULT_TYPE) -> int:
-        if checkUserAccess(update) == AccessLevel.ADMIN:
-            keyboard = [
-                [
-                    KeyboardButton(
-                        localization_map[Keys.SELECT_USER],
-                        request_user=KeyboardButtonRequestUser(request_id=self.REMOVE_USER_REQUEST_CODE)
-                    )
+        with database_proxy.connection_context():
+            if checkUserAccess(update) == AccessLevel.ADMIN:
+                keyboard = [
+                    [
+                        KeyboardButton(
+                            localization_map[Keys.SELECT_USER],
+                            request_user=KeyboardButtonRequestUser(request_id=self.REMOVE_USER_REQUEST_CODE)
+                        )
+                    ]
                 ]
-            ]
-            await update.effective_message.reply_text(
-                text=localization_map[Keys.SELECT_USER],
-                reply_markup=ReplyKeyboardMarkup(keyboard)
-            )
-            return self.STATE_USER_SELECTION
-        else:
-            await update.effective_message.reply_text(
-                text=localization_map[Keys.ACCESS_DENIED],
-            )
-            return ConversationHandler.END
+                await update.effective_message.reply_text(
+                    text=localization_map[Keys.SELECT_USER],
+                    reply_markup=ReplyKeyboardMarkup(keyboard)
+                )
+                return self.STATE_USER_SELECTION
+            else:
+                await update.effective_message.reply_text(
+                    text=localization_map[Keys.ACCESS_DENIED],
+                )
+                return ConversationHandler.END
 
     def createStatesWithHandlers(self):
         return {
