@@ -45,13 +45,14 @@ class PutCheeseCommand(BaseConversation):
         }
 
     async def executeCommand(self, update: Update, context: ContextTypes.DEFAULT_TYPE) -> int:
-        if checkUserAccess(update) >= AccessLevel.EMPLOYEE:
-            return await selectcheesetypeusecase.prepareSelectCheeseTypeUseCase(self.callback_filter, update)
-        else:
-            await update.effective_message.reply_text(
-                text=localization_map[Keys.ACCESS_DENIED],
-            )
-            return ConversationHandler.END
+        with database_proxy.connection_context():
+            if checkUserAccess(update) >= AccessLevel.EMPLOYEE:
+                return await selectcheesetypeusecase.prepareSelectCheeseTypeUseCase(self.callback_filter, update)
+            else:
+                await update.effective_message.reply_text(
+                    text=localization_map[Keys.ACCESS_DENIED],
+                )
+                return ConversationHandler.END
 
     async def handleInlineButtonClick(self, update: Update, context: ContextTypes.DEFAULT_TYPE):
         query = update.callback_query
