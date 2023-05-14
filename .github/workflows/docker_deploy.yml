@@ -38,11 +38,12 @@ jobs:
           env:
             PROD_DATABASE_ROOT_PASS: ${{secrets.PROD_DATABASE_ROOT_PASS}}
             PROD_DATABASE_NAME: ${{secrets.PROD_DATABASE_NAME}}
-            PROD_DATABASE_USERs: ${{secrets.PROD_DATABASE_USERs}}
+            PROD_DATABASE_USERs: ${{secrets.PROD_DATABASE_USER}}
             PROD_DATABASE_PASS: ${{secrets.PROD_DATABASE_PASS}}
             PROD_DATABASE_HOST: ${{secrets.PROD_DATABASE_HOST}}
             PROD_DATABASE_PORT: ${{secrets.PROD_DATABASE_PORT}}
             PRODUCTION_TELEGRAM_TOKEN: ${{secrets.DEBUG_TELEGRAM_TOKEN}}
+            DEBUG_TELEGRAM_TOKEN: ${{secrets.DEBUG_TELEGRAM_TOKEN}}
             PRODUCTION: false
           run: |
             pwd
@@ -50,3 +51,4 @@ jobs:
             ls -la ./compose-demo/
             cat ./compose-demo/docker-compose.yml
             docker compose -f ./compose-demo/docker-compose-dev.yml up -d --force-recreate --remove-orphans
+            docker compose -f ./docker-compose-local.yml up -d --force-recreate --remove-orphans

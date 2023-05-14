@@ -1,6 +1,4 @@
 version: '3.7'
 services:
   web:
-    image: ghcr.io/antiufieiev/inventory-management-bot/test-local-alpine:latest
-    ports:
-      - "8000:80"
+    image: "python:3.9-${IMAGE_VERSION}"
