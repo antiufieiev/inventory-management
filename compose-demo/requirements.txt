@@ -1,6 +1,0 @@
-python-telegram-bot==20.2
-peewee~=3.16.0
-PyMySQL==1.0.3
-mysql-connector
-pytz==2023.3
-cryptography

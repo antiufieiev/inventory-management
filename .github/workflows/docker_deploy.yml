@@ -42,8 +42,5 @@ jobs:
           env: 
             DATABASE_PASS: ${{ secrets.DATABASE_PASS_TEST}}
           run: |
-            pwd
-            ls -la
-            ls -la ./compose-demo/
-            cat ./compose-demo/docker-compose-dev.yml
-            docker compose -f ./compose-demo/docker-compose-dev.yml up -d --force-recreate --remove-orphans
+            cat ./docker-compose.yml
+            docker compose -f ./docker-compose.yml up -d --force-recreate --remove-orphans
