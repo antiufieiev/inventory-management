@@ -15,10 +15,10 @@ class DatabaseStateCommand(BaseConversation):
         )
 
     async def executeCommand(self, update: Update, context: ContextTypes.DEFAULT_TYPE):
-        if checkUserAccess(update) == AccessLevel.ADMIN:
-            packed = ''
-            unpacked = ''
-            with database_proxy.connection_context():
+        with database_proxy.connection_context():
+            if checkUserAccess(update) == AccessLevel.ADMIN:
+                packed = ''
+                unpacked = ''
                 packed_batches = Batches.select(Batches, peewee.fn.SUM(Batches.count).alias('sum')) \
                     .where(Batches.packaging.is_null(False)) \
                     .group_by(Batches.cheese, Batches.packaging)
@@ -38,14 +38,13 @@ class DatabaseStateCommand(BaseConversation):
                         batch.comment
                     )
 
-            await context.bot.send_message(
-                chat_id=update.effective_chat.id,
-                text=localization_map[Keys.PRINT_DATABASE_STATE].format(packed, unpacked)
-            )
-
-        else:
-            await update.effective_message.reply_text(
-                text=localization_map[Keys.ACCESS_DENIED],
-            )
+                await context.bot.send_message(
+                    chat_id=update.effective_chat.id,
+                    text=localization_map[Keys.PRINT_DATABASE_STATE].format(packed, unpacked)
+                )
+            else:
+                await update.effective_message.reply_text(
+                    text=localization_map[Keys.ACCESS_DENIED],
+                )
         context.user_data.clear()
         return ConversationHandler.END

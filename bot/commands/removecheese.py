@@ -46,21 +46,22 @@ class RemoveCheeseCommand(BaseConversation):
         return new_state
 
     async def executeCommand(self, update: Update, context: ContextTypes.DEFAULT_TYPE) -> int:
-        if checkUserAccess(update) >= AccessLevel.EMPLOYEE:
-            with database_proxy.connection_context():
-                query_result = Batches.select(Batches, peewee.fn.sum(Batches.count).alias("sum"))\
-                    .group_by(Batches.cheese).execute()
-                return await selectcheesetypeusecase.prepareSelectCheeseTypeUseCase(
-                    self.callback_filter,
-                    update,
-                    lambda variant: f"{variant.name}-{next(i for i in query_result if i.cheese == variant).sum}",
-                    lambda variant: any(item.cheese == variant for item in query_result)
+        with database_proxy.connection_context():
+            if checkUserAccess(update) >= AccessLevel.EMPLOYEE:
+                with database_proxy.connection_context():
+                    query_result = Batches.select(Batches, peewee.fn.sum(Batches.count).alias("sum"))\
+                        .group_by(Batches.cheese).execute()
+                    return await selectcheesetypeusecase.prepareSelectCheeseTypeUseCase(
+                        self.callback_filter,
+                        update,
+                        lambda variant: f"{variant.name}-{next(i for i in query_result if i.cheese == variant).sum}",
+                        lambda variant: any(item.cheese == variant for item in query_result)
+                    )
+            else:
+                await update.effective_message.reply_text(
+                    text=localization_map[Keys.ACCESS_DENIED],
                 )
-        else:
-            await update.effective_message.reply_text(
-                text=localization_map[Keys.ACCESS_DENIED],
-            )
-            return ConversationHandler.END
+                return ConversationHandler.END
 
     async def handleTypeSelectedAskBatch(self, cheese_type: str, update: Update,
                                          context: ContextTypes.DEFAULT_TYPE) -> int:
