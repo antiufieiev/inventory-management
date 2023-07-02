@@ -28,18 +28,18 @@ class PutCheeseCommand(BaseConversation):
                     self.handleInlineButtonClick,
                     pattern=f"^{self.callback_filter}")
             ],
-            STATE_WAIT_FOR_IS_PACKED_SELECTION: [
-                CallbackQueryHandler(
-                    self.handleInlineButtonClick,
-                    pattern=f"^{self.callback_filter}"
-                )
-            ],
-            STATE_WAIT_FOR_PACKAGING_SELECTION: [
-                CallbackQueryHandler(
-                    self.handleInlineButtonClick,
-                    pattern=f"^{self.callback_filter}"
-                )
-            ],
+            # STATE_WAIT_FOR_IS_PACKED_SELECTION: [
+            #     CallbackQueryHandler(
+            #         self.handleInlineButtonClick,
+            #         pattern=f"^{self.callback_filter}"
+            #     )
+            # ],
+            # STATE_WAIT_FOR_PACKAGING_SELECTION: [
+            #     CallbackQueryHandler(
+            #         self.handleInlineButtonClick,
+            #         pattern=f"^{self.callback_filter}"
+            #     )
+            # ],
             STATE_WAIT_FOR_COUNT_INPUT: [MessageHandler(filters.TEXT & ~filters.COMMAND, self.handleCountEntered)],
             STATE_WAIT_FOR_COMMENT_INPUT: [MessageHandler(filters.TEXT & ~filters.COMMAND, self.handleCommentResponse)]
         }
@@ -61,10 +61,10 @@ class PutCheeseCommand(BaseConversation):
         new_state = STATE_WAIT_FOR_CHEESE_TYPE_SELECTION
         if state == str(STATE_CHEESE_TYPE_SELECTED):
             new_state = await self.handleTypeSelected(data, update, context)
-        if state == str(STATE_WAIT_FOR_IS_PACKED_SELECTION):
-            new_state = await self.handlePackedEntered(data, update, context)
-        if state == str(STATE_WAIT_FOR_PACKAGING_SELECTION):
-            new_state = await self.handlePackagingFormatSelected(data, update, context)
+        # if state == str(STATE_WAIT_FOR_IS_PACKED_SELECTION):
+        #     new_state = await self.handlePackedEntered(data, update, context)
+        # if state == str(STATE_WAIT_FOR_PACKAGING_SELECTION):
+        #     new_state = await self.handlePackagingFormatSelected(data, update, context)
 
         await query.answer()
         return new_state
@@ -74,7 +74,7 @@ class PutCheeseCommand(BaseConversation):
         if result != STATUS_SUCCESS:
             return result
 
-        if checkUserAccess(update) >= AccessLevel.MANAGER:
+        if checkUserAccess(update) >= 10001:
             return await selectispackagedusecase.prepareIsPackagedState(self.callback_filter, update)
         else:
             return await selectcountstate.prepareCountState(update, context)
@@ -83,7 +83,7 @@ class PutCheeseCommand(BaseConversation):
         result = await selectcountstate.handleCountEntered(update, context)
         if result != STATUS_SUCCESS:
             return result
-        if checkUserAccess(update) >= AccessLevel.MANAGER:
+        if checkUserAccess(update) >= 10001:
             return await selectcommentusecase.prepareselectcommentusecase(update, context)
         else:
             context.user_data["comment"] = ""
@@ -113,7 +113,7 @@ class PutCheeseCommand(BaseConversation):
     async def finalize(self, update: Update, context: ContextTypes.DEFAULT_TYPE) -> int:
         count = context.user_data["count"]
         cheese_id = context.user_data["cheese_id"]
-        is_packed = context.user_data.get("is_packed")
+        is_packed = 0
         comment = context.user_data.get("comment")
         packaging_id = context.user_data.get("packaging_id")
         if packaging_id is not None:
@@ -125,7 +125,6 @@ class PutCheeseCommand(BaseConversation):
                     cheese=cheese_id,
                     batch_number=batch,
                     count=count,
-                    packaging_id=packaging_id,
                     comment=comment
                 ).save(force_insert=True)
                 if is_packed:

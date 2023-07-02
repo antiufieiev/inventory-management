@@ -15,8 +15,7 @@ class DatabaseStateCommand(BaseConversation):
 
     async def executeCommand(self, update: Update, context: ContextTypes.DEFAULT_TYPE):
         if checkUserAccess(update) == AccessLevel.ADMIN:
-            packed = ''
-            unpacked = ''
+            text = ''
             with database_proxy.connection_context():
                 for batch in Batches.select():
                     line = localization_map[Keys.PRINT_DATABASE_STATE_LINE].format(
@@ -25,13 +24,10 @@ class DatabaseStateCommand(BaseConversation):
                         str(batch.count),
                         batch.comment
                     )
-                    if batch.packaging is not None:
-                        packed += line
-                    if batch.packaging is None:
-                        unpacked += line
+                    text += line
             await context.bot.send_message(
                 chat_id=update.effective_chat.id,
-                text=localization_map[Keys.PRINT_DATABASE_STATE].format(packed, unpacked)
+                text=localization_map[Keys.PRINT_DATABASE_STATE_NO_PACKAGING].format(text)
             )
         else:
             await update.effective_message.reply_text(
