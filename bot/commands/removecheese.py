@@ -48,7 +48,7 @@ class RemoveCheeseCommand(BaseConversation):
     async def executeCommand(self, update: Update, context: ContextTypes.DEFAULT_TYPE) -> int:
         if checkUserAccess(update) >= AccessLevel.EMPLOYEE:
             with database_proxy.connection_context():
-                query_result = Batches.select(Batches, peewee.fn.sum(Batches.count).alias("sum"))\
+                query_result = Batches.select(Batches, peewee.fn.sum(Batches.count).alias("sum")) \
                     .group_by(Batches.cheese).execute()
                 return await selectcheesetypeusecase.prepareSelectCheeseTypeUseCase(
                     self.callback_filter,
@@ -84,7 +84,8 @@ class RemoveCheeseCommand(BaseConversation):
         result = await selectcountstate.handleCountEntered(update, context)
         if result != STATUS_SUCCESS:
             return result
-        await self.finalize(update, context)
+
+        return await self.finalize(update, context)
 
     async def finalize(self, update: Update, context: ContextTypes.DEFAULT_TYPE) -> int:
         count = float(context.user_data["count"])
