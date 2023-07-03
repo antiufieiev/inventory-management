@@ -13,10 +13,10 @@ from bot.usecase import selectcountstate, selectpackagingusecase, selectispackag
 from bot.usecase.state_values import *
 
 
-class PutCheeseCommand(BaseConversation):
+class PutCheeseSimpleCommand(BaseConversation):
 
     def __init__(self):
-        super(PutCheeseCommand, self).__init__(
+        super(PutCheeseSimpleCommand, self).__init__(
             command_name="putcheese",
             fallback_command=DefaultFallbackCommand()
         )
@@ -28,18 +28,6 @@ class PutCheeseCommand(BaseConversation):
                     self.handleInlineButtonClick,
                     pattern=f"^{self.callback_filter}")
             ],
-            # STATE_WAIT_FOR_IS_PACKED_SELECTION: [
-            #     CallbackQueryHandler(
-            #         self.handleInlineButtonClick,
-            #         pattern=f"^{self.callback_filter}"
-            #     )
-            # ],
-            # STATE_WAIT_FOR_PACKAGING_SELECTION: [
-            #     CallbackQueryHandler(
-            #         self.handleInlineButtonClick,
-            #         pattern=f"^{self.callback_filter}"
-            #     )
-            # ],
             STATE_WAIT_FOR_COUNT_INPUT: [MessageHandler(filters.TEXT & ~filters.COMMAND, self.handleCountEntered)],
             STATE_WAIT_FOR_COMMENT_INPUT: [MessageHandler(filters.TEXT & ~filters.COMMAND, self.handleCommentResponse)]
         }
@@ -61,10 +49,6 @@ class PutCheeseCommand(BaseConversation):
         new_state = STATE_WAIT_FOR_CHEESE_TYPE_SELECTION
         if state == str(STATE_CHEESE_TYPE_SELECTED):
             new_state = await self.handleTypeSelected(data, update, context)
-        # if state == str(STATE_WAIT_FOR_IS_PACKED_SELECTION):
-        #     new_state = await self.handlePackedEntered(data, update, context)
-        # if state == str(STATE_WAIT_FOR_PACKAGING_SELECTION):
-        #     new_state = await self.handlePackagingFormatSelected(data, update, context)
 
         await query.answer()
         return new_state
@@ -74,20 +58,15 @@ class PutCheeseCommand(BaseConversation):
         if result != STATUS_SUCCESS:
             return result
 
-        if checkUserAccess(update) >= AccessLevel.MANAGER:
-            return await selectispackagedusecase.prepareIsPackagedState(self.callback_filter, update)
-        else:
-            return await selectcountstate.prepareCountState(update, context)
+        return await selectcountstate.prepareCountState(update, context)
 
     async def handleCountEntered(self, update: Update, context: ContextTypes.DEFAULT_TYPE) -> int:
         result = await selectcountstate.handleCountEntered(update, context)
         if result != STATUS_SUCCESS:
             return result
-        if checkUserAccess(update) >= AccessLevel.MANAGER:
-            return await selectcommentusecase.prepareselectcommentusecase(update, context)
-        else:
-            context.user_data["comment"] = ""
-            return await self.finalize(update, context)
+
+        context.user_data["comment"] = ""
+        return await self.finalize(update, context)
 
     async def handlePackedEntered(self, packed_state: str, update: Update, context: ContextTypes.DEFAULT_TYPE) -> int:
         result = await selectispackagedusecase.onIsPackagedStateSelected(packed_state, update, context)
@@ -129,7 +108,7 @@ class PutCheeseCommand(BaseConversation):
                 ).save(force_insert=True)
                 if is_packed:
                     packagingModel = Packaging.get(Packaging.id == packaging_id)
-                    input_text = localization_map[Keys.ADD_CHEESE_SUCCESS]\
+                    input_text = localization_map[Keys.ADD_CHEESE_SUCCESS] \
                         .format(batch, count, packagingModel.packaging)
                 elif checkUserAccess(update) > AccessLevel.EMPLOYEE:
                     input_text = localization_map[Keys.ADD_CHEESE_SUCCESS_NO_PACKAGING].format(batch, count)

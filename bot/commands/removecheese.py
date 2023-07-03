@@ -53,7 +53,7 @@ class RemoveCheeseCommand(BaseConversation):
                 return await selectcheesetypeusecase.prepareSelectCheeseTypeUseCase(
                     self.callback_filter,
                     update,
-                    lambda variant: f"{variant.name}-{next(i for i in query_result if i.cheese == variant).sum}",
+                    lambda variant: f"{variant.name}-{round(next(i for i in query_result if i.cheese == variant).sum,2)}",
                     lambda variant: any(item.cheese == variant for item in query_result)
                 )
         else:
