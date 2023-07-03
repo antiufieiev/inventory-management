@@ -85,7 +85,7 @@ class RemoveCheeseCommand(BaseConversation):
         result = await selectcountstate.handleCountEntered(update, context)
         if result != STATUS_SUCCESS:
             return result
-        await self.finalize(update, context)
+        return await self.finalize(update, context)
 
     async def finalize(self, update: Update, context: ContextTypes.DEFAULT_TYPE) -> int:
         count = float(context.user_data["count"])
