@@ -97,20 +97,20 @@ class RemoveCheeseCommand(BaseConversation):
                 Batches.cheese == cheese_id and
                 Batches.batch_number == batch_number
             )
-            if batch.count == count:
-                Batches.delete().where(
-                    Batches.cheese == cheese_id and
-                    Batches.batch_number == batch_number
-                ).execute()
-            if batch.count > count:
-                batch.count = batch.count - count
-                batch.save()
             if batch.count < count:
                 await context.bot.send_message(
                     chat_id=update.effective_chat.id,
                     text=localization_map[Keys.COUNT_INPUT_ERROR_OVERLOAD]
                 )
                 return STATE_WAIT_FOR_COUNT_INPUT
+            if batch.count > count:
+                batch.count = batch.count - count
+                batch.save()
+            if batch.count == count:
+                Batches.delete().where(
+                    Batches.cheese == cheese_id and
+                    Batches.batch_number == batch_number
+                ).execute()
 
             success_text = localization_map[Keys.CHEESE_DELETE_SUCCESS].format(
                 count,
