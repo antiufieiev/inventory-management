@@ -28,30 +28,31 @@ class PutCheeseCommand(BaseConversation):
                     self.handleInlineButtonClick,
                     pattern=f"^{self.callback_filter}")
             ],
-            # STATE_WAIT_FOR_IS_PACKED_SELECTION: [
-            #     CallbackQueryHandler(
-            #         self.handleInlineButtonClick,
-            #         pattern=f"^{self.callback_filter}"
-            #     )
-            # ],
-            # STATE_WAIT_FOR_PACKAGING_SELECTION: [
-            #     CallbackQueryHandler(
-            #         self.handleInlineButtonClick,
-            #         pattern=f"^{self.callback_filter}"
-            #     )
-            # ],
+            STATE_WAIT_FOR_IS_PACKED_SELECTION: [
+                CallbackQueryHandler(
+                    self.handleInlineButtonClick,
+                    pattern=f"^{self.callback_filter}"
+                )
+            ],
+            STATE_WAIT_FOR_PACKAGING_SELECTION: [
+                CallbackQueryHandler(
+                    self.handleInlineButtonClick,
+                    pattern=f"^{self.callback_filter}"
+                )
+            ],
             STATE_WAIT_FOR_COUNT_INPUT: [MessageHandler(filters.TEXT & ~filters.COMMAND, self.handleCountEntered)],
             STATE_WAIT_FOR_COMMENT_INPUT: [MessageHandler(filters.TEXT & ~filters.COMMAND, self.handleCommentResponse)]
         }
 
     async def executeCommand(self, update: Update, context: ContextTypes.DEFAULT_TYPE) -> int:
-        if checkUserAccess(update) >= AccessLevel.EMPLOYEE:
-            return await selectcheesetypeusecase.prepareSelectCheeseTypeUseCase(self.callback_filter, update)
-        else:
-            await update.effective_message.reply_text(
-                text=localization_map[Keys.ACCESS_DENIED],
-            )
-            return ConversationHandler.END
+        with database_proxy.connection_context():
+            if checkUserAccess(update) >= AccessLevel.EMPLOYEE:
+                return await selectcheesetypeusecase.prepareSelectCheeseTypeUseCase(self.callback_filter, update)
+            else:
+                await update.effective_message.reply_text(
+                    text=localization_map[Keys.ACCESS_DENIED],
+                )
+                return ConversationHandler.END
 
     async def handleInlineButtonClick(self, update: Update, context: ContextTypes.DEFAULT_TYPE):
         query = update.callback_query
@@ -61,10 +62,10 @@ class PutCheeseCommand(BaseConversation):
         new_state = STATE_WAIT_FOR_CHEESE_TYPE_SELECTION
         if state == str(STATE_CHEESE_TYPE_SELECTED):
             new_state = await self.handleTypeSelected(data, update, context)
-        # if state == str(STATE_WAIT_FOR_IS_PACKED_SELECTION):
-        #     new_state = await self.handlePackedEntered(data, update, context)
-        # if state == str(STATE_WAIT_FOR_PACKAGING_SELECTION):
-        #     new_state = await self.handlePackagingFormatSelected(data, update, context)
+        if state == str(STATE_WAIT_FOR_IS_PACKED_SELECTION):
+            new_state = await self.handlePackedEntered(data, update, context)
+        if state == str(STATE_WAIT_FOR_PACKAGING_SELECTION):
+            new_state = await self.handlePackagingFormatSelected(data, update, context)
 
         await query.answer()
         return new_state
@@ -113,7 +114,7 @@ class PutCheeseCommand(BaseConversation):
     async def finalize(self, update: Update, context: ContextTypes.DEFAULT_TYPE) -> int:
         count = context.user_data["count"]
         cheese_id = context.user_data["cheese_id"]
-        is_packed = 0
+        is_packed = context.user_data.get("is_packed")
         comment = context.user_data.get("comment")
         packaging_id = context.user_data.get("packaging_id")
         if packaging_id is not None:
@@ -125,11 +126,12 @@ class PutCheeseCommand(BaseConversation):
                     cheese=cheese_id,
                     batch_number=batch,
                     count=count,
+                    packaging_id=packaging_id,
                     comment=comment
                 ).save(force_insert=True)
                 if is_packed:
                     packagingModel = Packaging.get(Packaging.id == packaging_id)
-                    input_text = localization_map[Keys.ADD_CHEESE_SUCCESS]\
+                    input_text = localization_map[Keys.ADD_CHEESE_SUCCESS] \
                         .format(batch, count, packagingModel.packaging)
                 elif checkUserAccess(update) > AccessLevel.EMPLOYEE:
                     input_text = localization_map[Keys.ADD_CHEESE_SUCCESS_NO_PACKAGING].format(batch, count)
