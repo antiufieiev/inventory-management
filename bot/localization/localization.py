@@ -50,6 +50,7 @@ class Keys(Enum):
     ADD_CHEESE_SUCCESS_NO_PACKAGING = 40
     CHEESE_VARIANT_DELETED = 41
     PRINT_DATABASE_STATE_LINE_PACKED = 42
+    PRINT_DATABASE_STATE_NO_PACKAGING = 43
 
 
 ru_map = {
@@ -95,7 +96,8 @@ ru_map = {
     Keys.ACCESS_LEVEL_MANAGER: "Менеджер",
     Keys.EMPLOYEE_ADD_CHEESE_SUCCESS: "Готово! Добавлена партия {0} в количестве {1}. Не забудьте указать номер партии и повесить табличку.",
     Keys.CHEESE_VARIANT_DELETED: "Успех! Вид cыра с названием {0} удален из системы.",
-    Keys.PRINT_DATABASE_STATE_LINE_PACKED: u"{0} \U0001F9C0{1} - {2}\n"
+    Keys.PRINT_DATABASE_STATE_LINE_PACKED: u"{0} \U0001F9C0{1} - {2}\n",
+    Keys.PRINT_DATABASE_STATE_NO_PACKAGING: "Сыры на хранении: \n{0}"
 }
 
 localization_map = ru_map
