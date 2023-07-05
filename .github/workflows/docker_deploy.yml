@@ -41,6 +41,16 @@ jobs:
         - name: docker-deploy-test
           env: 
             DATABASE_PASS: ${{ secrets.DATABASE_PASS_TEST}}
+            MYSQL_ROOT_PASSWORD: ${{secrets.MYSQL_ROOT_PASSWORD}}
+            MYSQL_DATABASE: ${{secrets.MYSQL_DATABASE}}
+            MYSQL_USER: ${{secrets.MYSQL_USER}}
+            MYSQL_PASSWORD: ${{secrets.MYSQL_PASSWORD}}
+            MYSQL_TCP_PORT: ${{secrets.MYSQL_TCP_PORT}}
+            MYSQL_HOST: 'localhost'
+            MYSQL_PORT: ${{secrets.MYSQL_TCP_PORT}}
+            PRODUCTION_TELEGRAM_TOKEN: ${{secrets.PRODUCTION_TELEGRAM_TOKEN}}
+            DEBUG_TELEGRAM_TOKEN: ${{secrets.DEBUG_TELEGRAM_TOKEN}}
+
           run: |
             cat ./docker-compose.yml
             docker compose -f ./docker-compose.yml up -d --force-recreate --remove-orphans
