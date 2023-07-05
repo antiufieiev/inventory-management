@@ -23,15 +23,16 @@ class AddCheeseCommand(BaseConversation):
         }
 
     async def executeCommand(self, update: Update, context: ContextTypes.DEFAULT_TYPE) -> int:
-        if checkUserAccess(update) >= AccessLevel.EMPLOYEE:
-            await context.bot.send_message(chat_id=update.effective_chat.id,
-                                           text=localization_map[Keys.ENTER_CHEESE_NAME])
-            return self.STATE_INPUT_TYPE
-        else:
-            await update.effective_message.reply_text(
-                text=localization_map[Keys.ACCESS_DENIED],
-            )
-            return ConversationHandler.END
+        with database_proxy.connection_context():
+            if checkUserAccess(update) >= AccessLevel.EMPLOYEE:
+                await context.bot.send_message(chat_id=update.effective_chat.id,
+                                               text=localization_map[Keys.ENTER_CHEESE_NAME])
+                return self.STATE_INPUT_TYPE
+            else:
+                await update.effective_message.reply_text(
+                    text=localization_map[Keys.ACCESS_DENIED],
+                )
+                return ConversationHandler.END
 
     async def handleCheeseTypeEntered(self, update: Update, context: ContextTypes.DEFAULT_TYPE) -> int:
         type_name = update.message.text

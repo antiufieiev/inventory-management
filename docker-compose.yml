@@ -27,7 +27,7 @@ services:
     build:
       context: .
       dockerfile: Dockerfile
-    image: inventory-management-bot:0.0.5
+    image: inventory-management-bot:0.0.6-beta04
     container_name: inventory-management-bot
     restart: always
     depends_on:
@@ -40,6 +40,7 @@ services:
       - MYSQL_PASSWORD=${PROD_DATABASE_PASS}
       - MYSQL_HOST=${PROD_DATABASE_HOST}
       - MYSQL_PORT=${PROD_DATABASE_PORT}
+      - PRODUCTION_TELEGRAM_TOKEN=${PRODUCTION_TELEGRAM_TOKEN}
       - PRODUCTION=true
 volumes:
   db_inventory:

@@ -25,20 +25,21 @@ class UserHistoryCommand(BaseConversation):
         }
 
     async def executeCommand(self, update: Update, context: ContextTypes.DEFAULT_TYPE) -> int:
-        if checkUserAccess(update) == AccessLevel.ADMIN:
-            keyboard = [
-                [KeyboardButton(localization_map[Keys.SELECT_USER], request_user=KeyboardButtonRequestUser(1))]
-            ]
-            await update.effective_message.reply_text(
-                text=localization_map[Keys.SELECT_USER],
-                reply_markup=ReplyKeyboardMarkup(keyboard)
-            )
-            return self.STATE_NICKNAME_SELECTED
-        else:
-            await update.effective_message.reply_text(
-                text=localization_map[Keys.ACCESS_DENIED],
-            )
-            return ConversationHandler.END
+        with database_proxy.connection_context():
+            if checkUserAccess(update) == AccessLevel.ADMIN:
+                keyboard = [
+                    [KeyboardButton(localization_map[Keys.SELECT_USER], request_user=KeyboardButtonRequestUser(1))]
+                ]
+                await update.effective_message.reply_text(
+                    text=localization_map[Keys.SELECT_USER],
+                    reply_markup=ReplyKeyboardMarkup(keyboard)
+                )
+                return self.STATE_NICKNAME_SELECTED
+            else:
+                await update.effective_message.reply_text(
+                    text=localization_map[Keys.ACCESS_DENIED],
+                )
+                return ConversationHandler.END
 
     @staticmethod
     async def handleNicknameSelected(update: Update, context: ContextTypes.DEFAULT_TYPE) -> int:

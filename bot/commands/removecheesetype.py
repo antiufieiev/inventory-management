@@ -3,6 +3,7 @@ from telegram.ext import ContextTypes, ConversationHandler, CallbackQueryHandler
 
 from bot.commands.basecommand import BaseConversation
 from bot.commands.default_fallback import DefaultFallbackCommand
+from bot.database.model import database_proxy
 from bot.entity.entities import AccessLevel
 from bot.feature.permissionchecker import checkUserAccess
 from bot.localization.localization import localization_map, Keys
@@ -25,13 +26,14 @@ class RemoveCheeseTypeCommand(BaseConversation):
         }
 
     async def executeCommand(self, update: Update, context: ContextTypes.DEFAULT_TYPE) -> int:
-        if checkUserAccess(update) >= AccessLevel.ADMIN:
-            return await selectcheesetypeusecase.prepareSelectCheeseTypeUseCase(self.callback_filter, update)
-        else:
-            await update.effective_message.reply_text(
-                text=localization_map[Keys.ACCESS_DENIED],
-            )
-            return ConversationHandler.END
+        with database_proxy.connection_context():
+            if checkUserAccess(update) >= AccessLevel.ADMIN:
+                return await selectcheesetypeusecase.prepareSelectCheeseTypeUseCase(self.callback_filter, update)
+            else:
+                await update.effective_message.reply_text(
+                    text=localization_map[Keys.ACCESS_DENIED],
+                )
+                return ConversationHandler.END
 
     async def handleInlineButtonClick(self, update: Update, context: ContextTypes.DEFAULT_TYPE) -> int:
         query = update.callback_query
