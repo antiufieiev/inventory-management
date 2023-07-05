@@ -1,5 +1,15 @@
 name: remote ssh deploy
-on: workflow_dispatch
+on: 
+  workflow_dispatch:
+    inputs:
+      PRODUCTION:
+        description: 'set PRODUCTION var '
+        required: true
+        default: 'false'
+        type: choice
+        options:
+          - false
+          - true
 
 jobs:
 
@@ -38,8 +48,10 @@ jobs:
           run: |
             echo "${{ secrets.ENV_FILE }}" > ./.env
             echo "DATABASE_PASS:${{ secrets.DATABASE_PASS_TEST }}" >> ./.env
+            echo "PRODUCTION:${{ inputs.PRODUCTION }}" >> ./.env
 
         - name: docker-deploy-test
           run: |
+            docker pull ghcr.io/antiufieiev/inventory-management-bot/inventory-management-bot-dev-slim:latest
             cat ./docker-compose.yml
             docker compose -f ./docker-compose.yml up -d --force-recreate --remove-orphans
