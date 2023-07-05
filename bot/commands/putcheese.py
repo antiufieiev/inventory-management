@@ -131,7 +131,7 @@ class PutCheeseCommand(BaseConversation):
                 ).save(force_insert=True)
                 if is_packed:
                     packagingModel = Packaging.get(Packaging.id == packaging_id)
-                    input_text = localization_map[Keys.ADD_CHEESE_SUCCESS] \
+                    input_text = localization_map[Keys.ADD_CHEESE_SUCCESS]\
                         .format(batch, count, packagingModel.packaging)
                 elif checkUserAccess(update) > AccessLevel.EMPLOYEE:
                     input_text = localization_map[Keys.ADD_CHEESE_SUCCESS_NO_PACKAGING].format(batch, count)
