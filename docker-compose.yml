@@ -24,7 +24,7 @@ services:
 
   inventory-management-bot:
     platform: "linux/amd64"
-    image: ghcr.io/antiufieiev/inventory-management-bot/inventory-management-bot-prod-slim:latest
+    image: ghcr.io/antiufieiev/inventory-management-bot/inventory-management-prod:v1
     container_name: inventory-management-bot
     restart: always
     depends_on:
@@ -40,5 +40,6 @@ services:
       - PRODUCTION_TELEGRAM_TOKEN=${PRODUCTION_TELEGRAM_TOKEN}
       - DEBUG_TELEGRAM_TOKEN=${DEBUG_TELEGRAM_TOKEN}
       - PRODUCTION=${PRODUCTION}
+
 volumes:
   db_inventory:
