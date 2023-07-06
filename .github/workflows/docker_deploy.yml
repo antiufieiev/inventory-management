@@ -55,6 +55,11 @@ jobs:
             echo "${{ secrets.ENV_FILE }}" > ./.env
             echo "DATABASE_PASS:${{ secrets.DATABASE_PASS_TEST }}" >> ./.env
             echo "PRODUCTION:${{ inputs.PRODUCTION }}" >> ./.env
+        
+        - name: Docker build
+          run: |
+            docker build 
+            docker build -t inventory-management-bot:0.0.6-beta05 .
 
         - name: docker-deploy
           run: |
