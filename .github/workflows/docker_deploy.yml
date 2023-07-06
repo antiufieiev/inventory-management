@@ -35,10 +35,7 @@ jobs:
           run: |
             docker compose version
             unset DOCKER_HOST
-            docker context ls
-            docker context create remote1 --docker "host=ssh://${{ secrets.HOST_USERNAME }}@${{ secrets.HOST_IP }}"
-            docker context use remote1
-            docker context ls
+            export DOCKER_HOST="ssh://root@193.160.119.175"
 
         - name: 'Create env file'
           run: |
