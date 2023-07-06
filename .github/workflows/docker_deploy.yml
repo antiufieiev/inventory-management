@@ -1,31 +1,57 @@
 name: remote ssh deploy
-on: workflow_dispatch
+on: 
+  workflow_dispatch:
+    inputs:
+      PRODUCTION:
+        description: 'set PRODUCTION var '
+        required: true
+        default: 'false'
+        type: choice
+        options:
+          - false
+          - true
 
 jobs:
 
-
     deploy:
-        name: git clone and pull
+        name: docker-compose deploy
         runs-on: ubuntu-latest
+
         steps:
+
         - name: checkout
           uses: actions/checkout@v1
-    
-        - name: pass envars
-          uses: ./
-          env:
-            MYSQL_ROOT_PASSWORD: ${{secrets.MYSQL_ROOT_PASSWORD}}
-            MYSQL_DATABASE: ${{secrets.MYSQL_DATABASE}}
-            MYSQL_USER: ${{secrets.MYSQL_USER}}
-            MYSQL_PASSWORD: ${{secrets.MYSQL_PASSWORD}}
-            MYSQL_TCP_PORT: ${{secrets.MYSQL_TCP_PORT}}
-          with:
-            host: ${{ secrets.HOST_IP }}
-            username: ${{ secrets.HOST_USERNAME }}
-            key: ${{ secrets.HOSDT_KEY }}
-            port: ${{ secrets.HOST_PORT }}
-            #envs: MYSQL_ROOT_PASSWORD,MYSQL_DATABASE,MYSQL_USER,MYSQL_PASSWORD,MYSQL_TCP_PORT
-            script: |
-              touch test.yml
-              ls -la
 
+        - name: Install SSH Key
+          uses: shimataro/ssh-key-action@v2
+          with:
+            key: ${{ secrets.HOST_PRIVATE_KEY }}
+            known_hosts: 'unnecessary'
+  
+        - name: Adding Known Hosts
+          run: ssh-keyscan -p ${{ secrets.HOST_PORT}} -H ${{ secrets.HOST_IP }}  >> ~/.ssh/known_hosts
+  
+        - name: Adding docker context
+          run: |
+            docker compose version
+            unset DOCKER_HOST
+            docker context ls
+            docker context create remote1 --docker "host=ssh://${{ secrets.HOST_USERNAME }}@${{ secrets.HOST_IP }}"
+            docker context use remote1
+            docker context ls
+
+        - name: Log in to registry
+          # This is where you will update the personal access token to GITHUB_TOKEN
+          run: echo "${{ secrets.GITHUB_TOKEN }}" | docker login ghcr.io -u $ --password-stdin
+
+        - name: 'Create env file'
+          run: |
+            echo "${{ secrets.ENV_FILE }}" > ./.env
+            echo "DATABASE_PASS:${{ secrets.DATABASE_PASS_TEST }}" >> ./.env
+            echo "PRODUCTION:${{ inputs.PRODUCTION }}" >> ./.env
+
+        - name: docker-deploy-test
+          run: |
+            docker pull ghcr.io/antiufieiev/inventory-management-bot/inventory-management-prod:v1
+            cat ./docker-compose.yml
+            docker compose -f ./docker-compose.yml up -d --force-recreate --remove-orphans

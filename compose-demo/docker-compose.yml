@@ -1,0 +1,5 @@
+version: '3.7'
+services:
+  web:
+    image: python:3.9-alpine3.17
+      - "8000:80"
