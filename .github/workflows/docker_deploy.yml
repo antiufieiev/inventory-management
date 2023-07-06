@@ -58,7 +58,6 @@ jobs:
         
         - name: Docker build
           run: |
-            docker build 
             docker build -t inventory-management-bot:0.0.6-beta05 .
 
         - name: docker-deploy
