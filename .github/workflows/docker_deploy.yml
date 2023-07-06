@@ -15,7 +15,7 @@ on:
         required: true
         type: string
       HOST_USERNAME:
-        description: 'set HOST_IP var '
+        description: 'set HOST_USERNAME var '
         required: true
         default: 'root'
         type: string
