@@ -10,12 +10,11 @@ on:
         options:
           - false
           - true
-         inputs:
       HOST_IP:
         description: 'set HOST_IP var '
         required: true
         type: string
-      HOST_IP:
+      HOST_USERNAME:
         description: 'set HOST_IP var '
         required: true
         default: 'root'
@@ -40,7 +39,7 @@ jobs:
             known_hosts: 'unnecessary'
   
         - name: Adding Known Hosts
-          run: ssh-keyscan -p ${{ inputs.HOST_PORT}} -H ${{ inputs.HOST_IP }}  >> ~/.ssh/known_hosts
+          run: ssh-keyscan -p ${{ secrets.HOST_PORT}} -H ${{ inputs.HOST_IP }}  >> ~/.ssh/known_hosts
   
         - name: Adding docker context
           run: |
