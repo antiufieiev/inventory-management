@@ -10,6 +10,17 @@ on:
         options:
           - false
           - true
+         inputs:
+      HOST_IP:
+        description: 'set HOST_IP var '
+        required: true
+        type: string
+      HOST_IP:
+        description: 'set HOST_IP var '
+        required: true
+        default: 'root'
+        type: string
+
 
 jobs:
 
@@ -29,13 +40,15 @@ jobs:
             known_hosts: 'unnecessary'
   
         - name: Adding Known Hosts
-          run: ssh-keyscan -p ${{ secrets.HOST_PORT}} -H ${{ secrets.HOST_IP }}  >> ~/.ssh/known_hosts
+          run: ssh-keyscan -p ${{ inputs.HOST_PORT}} -H ${{ inputs.HOST_IP }}  >> ~/.ssh/known_hosts
   
         - name: Adding docker context
           run: |
             docker compose version
-            unset DOCKER_HOST
-            export DOCKER_HOST="ssh://root@193.160.119.175"
+            docker context ls
+            docker context create remote1 --docker "host=ssh://${{ inputs.HOST_USERNAME }}@${{ inputs.HOST_IP }}"
+            docker context use remote1
+            docker context ls
             docker images ls
 
         - name: 'Create env file'
@@ -44,7 +57,7 @@ jobs:
             echo "DATABASE_PASS:${{ secrets.DATABASE_PASS_TEST }}" >> ./.env
             echo "PRODUCTION:${{ inputs.PRODUCTION }}" >> ./.env
 
-        - name: docker-deploy-test
+        - name: docker-deploy
           run: |
             echo $DOCKER_HOST
             docker ps -a
