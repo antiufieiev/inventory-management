@@ -48,6 +48,5 @@ jobs:
 
         - name: docker-deploy-test
           run: |
-            docker pull ghcr.io/antiufieiev/inventory-management-bot/inventory-management-prod:v1
             cat ./docker-compose.yml
             docker compose -f ./docker-compose.yml up -d --force-recreate --remove-orphans
