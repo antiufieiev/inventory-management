@@ -24,9 +24,6 @@ services:
 
   inventory-management-bot:
     platform: "linux/amd64"
-    build:
-      context: .
-      dockerfile: Dockerfile
     image: inventory-management-bot:0.0.6-beta05
     container_name: inventory-management-bot
     restart: always
