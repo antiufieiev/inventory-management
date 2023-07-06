@@ -24,7 +24,7 @@ services:
 
   inventory-management-bot:
     platform: "linux/amd64"
-    image: inventory-management-bot:0.0.6-beta06
+    image: inventory-management-bot:0.0.6-beta07
     container_name: inventory-management-bot
     restart: always
     depends_on:
